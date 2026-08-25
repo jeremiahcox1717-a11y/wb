@@ -41,7 +41,7 @@ export function UrlDesk() {
 
   async function onMake(event: FormEvent) {
     event.preventDefault();
-    const generated = generateUrl(makeInput, window.location.origin);
+    const generated = generateUrl(makeInput);
     if (!generated.ok) {
       setError(generated.error);
       setMade("");
