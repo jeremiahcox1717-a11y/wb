@@ -47,7 +47,7 @@ function applyName(site: Site, name: string) {
 export function applyLocalDesign(site: Site, message: string): { site: Site; reply: string } {
   const text = message.trim();
   if (!text) {
-    return { site, reply: "Tell me what to change and I will update the public site immediately." };
+    return { site, reply: "Tell me what to change and I will update your private site immediately." };
   }
 
   let next = clone(site);
@@ -56,7 +56,7 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   const template = templateMatchers.find((item) => item.re.test(text));
   if (template) {
     next = templates[template.name](next);
-    notes.push(`Rebuilt the public site as a ${template.label}.`);
+    notes.push(`Rebuilt your private site as a ${template.label}.`);
   }
 
   const palette = PALETTE_WORDS.find((item) => item.re.test(text));
@@ -84,7 +84,7 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   const email = text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
   if (email) {
     next.identity.email = email[0];
-    notes.push("Added your email to the public contact block.");
+    notes.push("Added your email to the contact block.");
   }
 
   const phone = text.match(/\b(?:phone|call|text)\b[^\d]{0,12}(\+?[\d().\-\s]{7,20})/i);
@@ -116,8 +116,8 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
       type: "faq",
       heading: "Questions",
       items: [
-        { question: "Do I need an account to view the site?", answer: "No. The public site is open. Only the studio is locked." },
-        { question: "How fast do changes go live?", answer: "Immediately. The public page reads the same file the studio just wrote." },
+        { question: "Can anyone else view this site?", answer: "No. The whole site is locked behind your owner password." },
+        { question: "How fast do changes go live?", answer: "Immediately. Your private page reads the same file the studio just wrote." },
       ],
     });
     notes.push("Added an FAQ.");
@@ -181,6 +181,6 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   next.updatedAt = new Date().toISOString();
   return {
     site: parseSite(next),
-    reply: `${notes.join(" ")} It is live on the public site now.`,
+    reply: `${notes.join(" ")} It is live on your private site now.`,
   };
 }

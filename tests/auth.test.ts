@@ -4,6 +4,7 @@ import {
   isSameOrigin,
   isStudioConfigured,
   passwordsMatch,
+  safeNextPath,
   verifySessionToken,
 } from "@/lib/auth";
 
@@ -40,5 +41,13 @@ describe("studio auth", () => {
       },
     });
     expect(isSameOrigin(request)).toBe(true);
+  });
+
+  it("only allows same-site relative next paths after login", () => {
+    expect(safeNextPath("/studio")).toBe("/studio");
+    expect(safeNextPath("/")).toBe("/");
+    expect(safeNextPath("https://evil.example/phish")).toBe("/");
+    expect(safeNextPath("//evil.example")).toBe("/");
+    expect(safeNextPath("/studio/login")).toBe("/");
   });
 });

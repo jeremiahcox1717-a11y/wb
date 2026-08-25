@@ -96,4 +96,12 @@ export function isSameOrigin(request: Request) {
   }
 }
 
+export function safeNextPath(value: string | null | undefined) {
+  if (!value) return "/";
+  if (!value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return "/";
+  if (value.includes("://")) return "/";
+  if (value.startsWith("/studio/login")) return "/";
+  return value;
+}
+
 export { COOKIE as SESSION_COOKIE };

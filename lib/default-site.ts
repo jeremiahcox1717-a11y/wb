@@ -138,10 +138,10 @@ export function defaultSite(): Site {
           {
             type: "hero",
             layout: "cinematic",
-            kicker: "Private studio · public site",
+            kicker: "Private site · owner only",
             heading: "Jordan Bennett",
             subheading:
-              "This page is live. Change the colors, the words, the whole business — the public site updates the moment you ask.",
+              "This page is locked. Change the colors, the words, the whole business — it updates the moment you ask, and only you can see it.",
             primaryCta: { label: "See the work", href: "#work" },
             secondaryCta: { label: "Get in touch", href: "#contact" },
           },
@@ -153,12 +153,12 @@ export function defaultSite(): Site {
               "Ask the studio to turn this into a bakery, a portfolio, a restaurant, or anything else.",
             items: [
               {
-                title: "A public homepage",
-                body: "Anyone can visit this URL. There is no login on the public site — only the finished pages.",
+                title: "A private homepage",
+                body: "The whole site asks for your password. Nobody else can open these pages.",
               },
               {
                 title: "A locked studio",
-                body: "Only you can open /studio. That is where you talk to the designer and publish instantly.",
+                body: "Open /studio after you sign in. That is where you talk to the designer and save instantly.",
               },
               {
                 title: "Live customizations",
@@ -171,12 +171,12 @@ export function defaultSite(): Site {
             type: "richtext",
             eyebrow: "About",
             heading: "Start with a sentence. Keep going from there.",
-            body: "Replace this with your story. Name the business. Add photos, pricing, testimonials, a contact section — or wipe it and begin again. The public site always shows the latest version.",
+            body: "Replace this with your story. Name the business. Add photos, pricing, testimonials, a contact section — or wipe it and begin again. Only you see the latest version.",
           },
           {
             type: "stats",
             items: [
-              { value: "Live", label: "Public the moment you save" },
+              { value: "Live", label: "Saved the moment you send" },
               { value: "1", label: "Owner of the studio" },
               { value: "∞", label: "Directions this site can take" },
             ],
@@ -189,7 +189,7 @@ export function defaultSite(): Site {
           },
           {
             type: "footer",
-            note: "Built in a private studio. Shown to everyone else.",
+            note: "Built in a private studio. Shown only to you.",
           },
         ],
       },

@@ -1,17 +1,17 @@
 # WB
 
-A public website plus a private AI studio that only you can open.
+A private website only you can open, plus a studio where you tell it what to become.
 
-Visitors see `/`. You are the only person who can open `/studio`, talk to the designer, and publish. Each message writes the live site immediately — there is no separate “go live” step.
+Every page is locked behind `ADMIN_PASSWORD`. There is no public homepage. Search engines are told to skip the whole site.
 
-## Two URLs
+## Two URLs (both require your password)
 
-| URL | Who can open it |
+| URL | After you sign in |
 | --- | --- |
-| `/` | Everyone. This is the website. |
-| `/studio` | Only you, with `ADMIN_PASSWORD`. Search engines are told to skip it. |
+| `/` | Your website |
+| `/studio` | The designer |
 
-The studio is not linked from the public site.
+Anyone else who opens the URL sees the login screen only.
 
 ## Run it
 
@@ -32,12 +32,13 @@ npm install
 npm run dev
 ```
 
-- Public site: [http://localhost:3000](http://localhost:3000)
-- Private studio: [http://localhost:3000/studio](http://localhost:3000/studio)
+- Login: [http://localhost:3000/studio/login](http://localhost:3000/studio/login)
+- Your site: [http://localhost:3000](http://localhost:3000)
+- Studio: [http://localhost:3000/studio](http://localhost:3000/studio)
 
 `npm test`, `npm run lint`, and `npm run build` are the checks.
 
-## Ask the designer, it goes public
+## Ask the designer
 
 In `/studio`, type things like:
 
@@ -46,13 +47,13 @@ In `/studio`, type things like:
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-The preview on the right is the same data the public homepage reads. Refresh `/` in another tab and it already matches.
+The preview on the right is the same data your private homepage reads.
 
-Without an API key, a built-in designer still publishes (business types, palettes, names, contact, extra sections). Paste an OpenAI-compatible key in **Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored and never rendered on the public site.
+Without an API key, a built-in designer still saves (business types, palettes, names, contact, extra sections). Paste an OpenAI-compatible key in **Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored.
 
 ## Deploy
 
-The public site updates by writing `data/site.json` on the server. Use a host with a writable disk (Railway, Render, Fly.io, a VPS, or Docker with a volume). Serverless hosts that reset the filesystem will lose customizations after idle.
+The site updates by writing `data/site.json` on the server. Use a host with a writable disk (Railway, Render, Fly.io, a VPS, or Docker with a volume). Serverless hosts that reset the filesystem will lose customizations after idle.
 
 Required environment variable: `ADMIN_PASSWORD` (8+ characters). Optional: `SESSION_SECRET`, `OPENAI_API_KEY`.
 
@@ -64,11 +65,11 @@ docker run --rm -p 3000:3000 \
   wb
 ```
 
-Put the app on a domain you own. `/` is the public website. Bookmark `/studio` privately.
+Keep the GitHub repository private if it contains your pages. Bookmark the login URL. Do not share the password.
 
 ## Lock
 
-- Studio login is rate-limited and checks a password only you set on the server. Nobody can invent that password from the browser.
-- Studio responses send `X-Robots-Tag: noindex`.
-- `robots.txt` disallows `/studio` and `/api`.
+- Login is rate-limited and checks a password only you set on the server. Nobody can invent that password from the browser.
+- Every response sends `X-Robots-Tag: noindex`.
+- `robots.txt` disallows the whole site.
 - Do not commit `.env.local` or `data/settings.json`.

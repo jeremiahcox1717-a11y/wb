@@ -5,7 +5,7 @@ import { parseSite } from "@/lib/schema";
 import { templates } from "@/lib/ai/templates";
 
 describe("local designer", () => {
-  it("rebuilds the public site as a bakery immediately", () => {
+  it("rebuilds the site as a bakery immediately", () => {
     const { site, reply } = applyLocalDesign(defaultSite(), "Turn this into a bakery called Hearth & Crumb");
     expect(site.identity.siteName).toBe("Hearth & Crumb");
     expect(site.theme.background).toBe("#f6f1e7");

@@ -29,7 +29,7 @@ export function StudioApp({
     {
       role: "assistant",
       content:
-        "The public site is already live. Tell me what it should be — a business, a color, a name, a new section — and I will publish it immediately.",
+        "This site is private — only you can see it. Tell me what it should be, and I will save it immediately.",
     },
   ]);
   const [busy, setBusy] = useState(false);
@@ -110,7 +110,7 @@ export function StudioApp({
     }
     setSavedKey(Boolean(data.hasKey));
     setApiKey("");
-    setNotice("Saved. New messages will use this key. It is not on the public site.");
+    setNotice("Saved. New messages will use this key. It is never shown on the site.");
   }
 
   async function logout() {
@@ -125,7 +125,7 @@ export function StudioApp({
         <header className="flex items-center justify-between px-5 py-4">
           <div>
             <p className="text-[11px] font-semibold tracking-[0.28em] text-[#d4a574] uppercase">Owner studio</p>
-            <p className="mt-1 text-sm text-[#b9a89a]">Public site updates as you send</p>
+            <p className="mt-1 text-sm text-[#b9a89a]">Your private site updates as you send</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -144,8 +144,8 @@ export function StudioApp({
         {settingsOpen ? (
           <form onSubmit={saveSettings} className="space-y-3 border-b border-[#2a2a32] px-5 py-4 text-sm">
             <p className="text-[#b9a89a]">
-              Optional language-model key. Stored only on this server, never committed, never shown on the public
-              site. Without a key, the built-in designer still publishes immediately.
+              Optional language-model key. Stored only on this server, never committed, never shown on the site.
+              Without a key, the built-in designer still saves immediately.
             </p>
             <label className="block text-xs tracking-wide text-[#b9a89a] uppercase">
               OpenAI-compatible API key
@@ -186,7 +186,7 @@ export function StudioApp({
               </p>
             </div>
           ))}
-          {busy ? <p className="text-xs tracking-wide text-[#d4a574] uppercase">Publishing to the live site…</p> : null}
+          {busy ? <p className="text-xs tracking-wide text-[#d4a574] uppercase">Saving to your private site…</p> : null}
         </div>
 
         <div className="flex flex-wrap gap-2 px-5 pb-3">
@@ -221,7 +221,7 @@ export function StudioApp({
           />
           <div className="mt-3 flex items-center justify-between">
             <a href="/" target="_blank" rel="noreferrer" className="text-xs text-[#b9a89a] underline">
-              Open public site
+              Open your site
             </a>
             <button
               id="studio-publish"
@@ -238,7 +238,7 @@ export function StudioApp({
       <section className="relative hidden min-w-0 flex-1 overflow-hidden lg:block">
         <div className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-[11px] tracking-wide text-[#d4a574] uppercase backdrop-blur">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#7dffb3]" />
-          Live preview · public
+          Live preview · private
         </div>
         <div className="h-screen overflow-y-auto">
           {home ? <SiteView site={site} page={home} preview /> : null}

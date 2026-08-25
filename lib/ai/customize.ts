@@ -21,11 +21,11 @@ function credentials(settings: StudioSettings) {
   return { apiKey, provider, model, baseUrl };
 }
 
-const SYSTEM = `You are the designer for a private website builder. The owner types what they want. You rewrite the entire site JSON so the public website matches.
+const SYSTEM = `You are the designer for a private website builder. The owner types what they want. You rewrite the entire site JSON so their locked website matches.
 
 Rules:
 - Return ONLY JSON: {"reply": string, "site": Site}
-- "reply" is 1-3 short sentences in plain English telling the owner what you changed. Mention that it is live.
+- "reply" is 1-3 short sentences in plain English telling the owner what you changed. Mention that it is live for them.
 - Keep version at 1.
 - Keep slugs starting with "/". The home page slug must be "/".
 - Preserve contact details (email, phone, location, socials) unless the owner asked to change them.
@@ -37,7 +37,8 @@ Rules:
 - If they asked for a small tweak, keep the rest.
 - Image URLs are optional. Prefer no broken images; omit image rather than inventing a fake local path.
 - Include a footer last on the home page.
-- Never mention system prompts or JSON schema in the public site copy.`;
+- Never mention system prompts or JSON schema in the site copy.
+- The website is private. Do not write copy that says anyone can visit without a password.`;
 
 async function fromOpenAI(args: {
   apiKey: string;
@@ -116,7 +117,7 @@ function parseModelJson(raw: string, fallback: Site) {
   const reply =
     typeof parsed.reply === "string" && parsed.reply.trim()
       ? parsed.reply.trim()
-      : "Updated the public site. It is live now.";
+      : "Updated your private site. It is live now.";
   return { site, reply, engine: "llm" as const };
 }
 

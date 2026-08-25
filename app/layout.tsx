@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { readSite } from "@/lib/store";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const site = await readSite();
-  return {
-    title: site.seo.title,
-    description: site.seo.description,
-    robots: { index: true, follow: true },
-  };
-}
+export const metadata: Metadata = {
+  title: "Private site",
+  robots: { index: false, follow: false },
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
