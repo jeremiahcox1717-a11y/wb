@@ -76,9 +76,10 @@ async function dnsStatus(host: string): Promise<DomainStatus> {
 }
 
 export async function checkDomain(host: string): Promise<DomainStatus> {
-  const rdap = await rdapStatus(host);
-  if (rdap) return rdap;
-  return dnsStatus(host);
+  const [rdap, dns] = await Promise.all([rdapStatus(host), dnsStatus(host)]);
+  if (rdap === "taken" || dns === "taken") return "taken";
+  if (rdap === "available" || dns === "available") return "available";
+  return "unknown";
 }
 
 export async function searchPublicDomains(input: string): Promise<{ query: string; hits: DomainHit[]; error?: string }> {
