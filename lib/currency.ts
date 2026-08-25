@@ -161,8 +161,19 @@ export function isCurrencyCode(value: string): value is CurrencyCode {
 
 export function resolveCurrency(raw: string): CurrencyCode | null {
   const key = raw.trim().toLowerCase().replace(/[$.]/g, "");
+  if (!key) return null;
   if (isCurrencyCode(key.toUpperCase())) return key.toUpperCase() as CurrencyCode;
-  return ALIASES[key] ?? null;
+  if (ALIASES[key]) return ALIASES[key];
+  const exactName = CURRENCY_CODES.find((code) => CURRENCY_NAMES[code].toLowerCase() === key);
+  if (exactName) return exactName;
+  const hits = CURRENCY_CODES.filter(
+    (code) => code.toLowerCase().startsWith(key) || CURRENCY_NAMES[code].toLowerCase().includes(key),
+  );
+  return hits.length === 1 ? hits[0] : null;
+}
+
+export function readCurrencyInput(raw: string, fallback?: CurrencyCode): CurrencyCode | null {
+  return resolveCurrency(raw) ?? fallback ?? null;
 }
 
 export function moneyFractionDigits(code: CurrencyCode) {

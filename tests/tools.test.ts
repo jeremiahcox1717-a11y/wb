@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CURRENCY_CODES, formatConversion, looksLikeMoney, parseMoney } from "@/lib/currency";
+import { CURRENCY_CODES, formatConversion, looksLikeMoney, parseMoney, resolveCurrency } from "@/lib/currency";
 import { defaultSite } from "@/lib/default-site";
 import { scanNameLocal } from "@/lib/name-guard";
 import { entryIsEmpty, normalizeEntry } from "@/lib/notebook";
@@ -42,6 +42,13 @@ describe("currency parser", () => {
   it("detects money questions", () => {
     expect(looksLikeMoney("100 CAD")).toBe(true);
     expect(looksLikeMoney("build me a bakery")).toBe(false);
+  });
+
+  it("reads typed currency names on both sides", () => {
+    expect(resolveCurrency("euros")).toBe("EUR");
+    expect(resolveCurrency("pounds")).toBe("GBP");
+    expect(resolveCurrency("yen")).toBe("JPY");
+    expect(resolveCurrency("Canadian Dollar")).toBe("CAD");
   });
 });
 

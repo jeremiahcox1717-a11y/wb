@@ -18,7 +18,7 @@ export const currencyCalculatorSection: SiteSection = {
   id: "currency",
   type: "currencyCalculator",
   heading: "Currency calculator",
-  body: "Pick a from and to currency, convert either way, and see every other live rate.",
+  body: "Type a currency on both sides, or pick from the lists. Convert either way and see every live rate.",
 };
 
 export const notebookSection: SiteSection = {
