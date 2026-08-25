@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { OwnerBar } from "@/components/owner-bar";
-import { SiteView } from "@/components/site-view";
+import { PrivateSiteShell } from "@/components/private-site-shell";
 import { requireOwnerPage } from "@/lib/owner-gate";
 import { readSite } from "@/lib/store";
 
@@ -13,10 +12,5 @@ export default async function PrivateSlugPage({ params }: { params: Promise<{ sl
   const site = await readSite();
   const page = site.pages.find((item) => item.slug === `/${slug}`);
   if (!page) notFound();
-  return (
-    <>
-      <OwnerBar />
-      <SiteView site={site} page={page} />
-    </>
-  );
+  return <PrivateSiteShell initialSite={site} pageSlug={`/${slug}`} />;
 }

@@ -8,8 +8,8 @@ Every page is locked behind `ADMIN_PASSWORD`. There is no public homepage. Searc
 
 | URL | After you sign in |
 | --- | --- |
-| `/` | Your website |
-| `/studio` | The designer |
+| `/` | Your website, with the AI builder bot on the page |
+| `/studio` | Full designer plus optional AI key |
 
 Anyone else who opens the URL sees the login screen only.
 
@@ -38,18 +38,18 @@ npm run dev
 
 `npm test`, `npm run lint`, and `npm run build` are the checks.
 
-## Ask the designer
+## Ask the builder bot
 
-In `/studio`, type things like:
+After you sign in, the **Website builder** chat sits on the site. Type things like:
 
 - “Turn this into a bakery called Hearth & Crumb”
 - “Make a dark editorial portfolio”
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-The preview on the right is the same data your private homepage reads.
+The site on the left (or above, on a phone) updates as soon as the bot replies.
 
-Without an API key, a built-in designer still saves (business types, palettes, names, contact, extra sections). Paste an OpenAI-compatible key in **Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored.
+Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored.
 
 ## Deploy
 

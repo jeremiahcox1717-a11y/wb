@@ -167,13 +167,19 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   }
 
   if (notes.length === 0) {
-    const current = hero(next);
-    if (current && current.type === "hero") {
-      current.subheading = text.slice(0, 400);
-      next.identity.tagline = text.slice(0, 200);
-      notes.push("I treated that as a homepage brief and updated the live subheading.");
+    if (/\b(?:build|make|create|design)\b.+\b(?:web ?site|site|page|homepage)\b/i.test(text)) {
+      notes.push(
+        "I can build it. Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio, or design studio — and I will rebuild this page for you.",
+      );
     } else {
-      notes.push("I heard you, but I need a more specific change — a business type, a color, a name, or a section to add.");
+      const current = hero(next);
+      if (current && current.type === "hero") {
+        current.subheading = text.slice(0, 400);
+        next.identity.tagline = text.slice(0, 200);
+        notes.push("I treated that as a homepage brief and updated the live subheading.");
+      } else {
+        notes.push("I heard you, but I need a more specific change — a business type, a color, a name, or a section to add.");
+      }
     }
     notes.push("Paste an AI key in studio settings if you want deeper rewrites from a language model.");
   }

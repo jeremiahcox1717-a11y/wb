@@ -36,6 +36,12 @@ describe("local designer", () => {
     expect(types).toContain("pricing");
   });
 
+  it("asks for a business type when told to build a website without details", () => {
+    const { site, reply } = applyLocalDesign(defaultSite(), "build me a website");
+    expect(site.identity.siteName).toBe("Jordan Bennett");
+    expect(reply.toLowerCase()).toMatch(/bakery|coffee|restaurant/);
+  });
+
   it("every built-in template is valid site JSON", () => {
     const base = defaultSite();
     for (const build of Object.values(templates)) {
