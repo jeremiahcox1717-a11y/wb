@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import type { Site } from "@/lib/schema";
+import { extractUrl, formatAnswer, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -19,7 +20,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
     {
       role: "assistant",
       content:
-        "Hi — I am your website builder. Tell me what you want (a bakery, a restaurant, a portfolio, a gym…) and I will rebuild this site for you right now.",
+        "Hi — I am your website builder. Tell me what to build, or paste a URL someone sent you and I will answer YES or NO.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -36,6 +37,21 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
     const history = [...turns, { role: "user" as const, content: trimmed }];
     setTurns(history);
     try {
+      if (looksLikeUrlQuestion(trimmed) && extractUrl(trimmed)) {
+        const response = await fetch("/api/urls/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: extractUrl(trimmed) }),
+        });
+        const data = (await response.json()) as UrlScan & { error?: string };
+        if (!response.ok) {
+          setTurns((current) => [...current, { role: "assistant", content: data.error || "I could not scan that URL." }]);
+          return;
+        }
+        setTurns((current) => [...current, { role: "assistant", content: formatAnswer(data) }]);
+        return;
+      }
+
       const response = await fetch("/api/customize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,10 +88,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   }
 
   return (
-    <aside
-      id="builder-bot"
-      className="flex h-[46vh] w-full shrink-0 flex-col border-t border-[#2a2a32] bg-[#0e0e12] text-[#f3eee8] md:h-auto md:w-[26rem] md:border-t-0 md:border-l"
-    >
+    <div id="builder-bot" className="flex min-h-0 flex-1 flex-col">
       <header className="flex items-center gap-3 border-b border-[#2a2a32] px-4 py-3">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d4a574] text-sm font-semibold text-[#1a140f]">
           AI
@@ -149,6 +162,6 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           </button>
         </div>
       </form>
-    </aside>
+    </div>
   );
 }

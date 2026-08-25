@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { OwnerBar } from "@/components/owner-bar";
-import { SiteBuilderBot } from "@/components/site-builder-bot";
+import { OwnerTools } from "@/components/owner-tools";
 import { SiteView } from "@/components/site-view";
 import type { Site } from "@/lib/schema";
 
@@ -25,7 +25,7 @@ export function PrivateSiteShell({ initialSite, pageSlug }: { initialSite: Site;
         <div className="min-h-[54vh] min-w-0 flex-1 overflow-auto">
           <SiteView site={site} page={page} />
         </div>
-        <SiteBuilderBot onSite={setSite} />
+        <OwnerTools onSite={setSite} />
       </div>
     </div>
   );
