@@ -447,7 +447,7 @@ function renderSection(section: SiteSection, site: Site) {
       );
     case "currencyCalculator":
       return (
-        <SectionFrame key={section.id ?? "currencyCalculator"} id={section.id}>
+        <SectionFrame key={section.id ?? "currencyCalculator"} id={section.id} compact>
           <CurrencyCalculator heading={section.heading} body={section.body} />
         </SectionFrame>
       );

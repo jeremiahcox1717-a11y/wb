@@ -1,25 +1,24 @@
 import { NextResponse } from "next/server";
 import { isSameOrigin, readSessionCookie, verifySessionToken } from "@/lib/auth";
 import {
-  DEFAULT_TARGETS,
+  CURRENCY_CODES,
   formatConversion,
   formatMoney,
   isCurrencyCode,
   parseMoney,
+  resolveCurrency,
   type CurrencyCode,
 } from "@/lib/currency";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-async function frankfurter(amount: number, from: CurrencyCode, to: CurrencyCode[]) {
-  const unique = [...new Set(to.filter((code) => code !== from))];
+async function frankfurter(amount: number, from: CurrencyCode) {
   const url = new URL("https://api.frankfurter.app/latest");
   url.searchParams.set("amount", String(amount));
   url.searchParams.set("from", from);
-  url.searchParams.set("to", unique.join(","));
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), 8000);
   try {
     const response = await fetch(url, {
       signal: controller.signal,
@@ -27,8 +26,6 @@ async function frankfurter(amount: number, from: CurrencyCode, to: CurrencyCode[
     });
     if (!response.ok) throw new Error(`Rates unavailable (${response.status})`);
     const data = (await response.json()) as {
-      amount?: number;
-      base?: string;
       date?: string;
       rates?: Record<string, number>;
     };
@@ -40,6 +37,18 @@ async function frankfurter(amount: number, from: CurrencyCode, to: CurrencyCode[
   } finally {
     clearTimeout(timer);
   }
+}
+
+function parseBody(body: { text?: string; amount?: number; from?: string; to?: string } | null) {
+  if (typeof body?.amount === "number" && body.from) {
+    const from = resolveCurrency(body.from);
+    if (!from) return null;
+    const to = body.to ? resolveCurrency(body.to) : undefined;
+    if (body.to && !to) return null;
+    if (!Number.isFinite(body.amount) || body.amount < 0 || body.amount > 1_000_000_000) return null;
+    return { amount: body.amount, from, to: to ?? undefined };
+  }
+  return parseMoney(String(body?.text ?? ""));
 }
 
 export async function POST(request: Request) {
@@ -57,28 +66,31 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as
-    | { text?: string; amount?: number; from?: string }
+    | { text?: string; amount?: number; from?: string; to?: string }
     | null;
-  const parsed =
-    typeof body?.amount === "number" && body.from
-      ? parseMoney(`${body.amount} ${body.from}`)
-      : parseMoney(String(body?.text ?? ""));
+  const parsed = parseBody(body);
   if (!parsed) {
     return NextResponse.json(
-      { error: "Try something like 100 CAD, 50 pounds, or 20 euros." },
+      { error: "Pick two currencies, or try something like 100 CAD to EUR." },
       { status: 400 },
     );
   }
 
   try {
-    const targets = [...DEFAULT_TARGETS, "CAD"] as CurrencyCode[];
-    const { date, rates } = await frankfurter(parsed.amount, parsed.from, targets);
+    const { date, rates } = await frankfurter(parsed.amount, parsed.from);
+    const to = parsed.to;
+    const converted =
+      !to ? undefined : to === parsed.from ? parsed.amount : rates[to];
     return NextResponse.json({
       amount: parsed.amount,
       from: parsed.from,
+      to: to ?? null,
       fromLabel: formatMoney(parsed.amount, parsed.from),
+      toLabel: to && typeof converted === "number" ? formatMoney(converted, to) : null,
+      converted: typeof converted === "number" ? converted : null,
       date: date ?? null,
       rates,
+      codes: CURRENCY_CODES,
       summary: formatConversion(parsed, rates, date),
     });
   } catch {

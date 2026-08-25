@@ -15,7 +15,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [turns, setTurns] = useState<Turn[]>([
     {
       role: "assistant",
-      content: "Tell me what to build. I can also scan a URL or convert money like 100 CAD.",
+      content: "Tell me what to build. I can also scan a URL or convert money both ways, like 100 CAD to EUR.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);

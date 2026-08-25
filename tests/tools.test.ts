@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { looksLikeMoney, parseMoney } from "@/lib/currency";
+import { CURRENCY_CODES, formatConversion, looksLikeMoney, parseMoney } from "@/lib/currency";
 import { defaultSite } from "@/lib/default-site";
 import { scanNameLocal } from "@/lib/name-guard";
 import { entryIsEmpty, normalizeEntry } from "@/lib/notebook";
@@ -15,8 +15,28 @@ describe("currency parser", () => {
     expect(parseMoney("20 euros")).toEqual({ amount: 20, from: "EUR" });
   });
 
+  it("reads a from and to pair", () => {
+    expect(parseMoney("100 CAD to EUR")).toEqual({ amount: 100, from: "CAD", to: "EUR" });
+    expect(parseMoney("50 pounds to CAD")).toEqual({ amount: 50, from: "GBP", to: "CAD" });
+    expect(parseMoney("20 euros in yen")).toEqual({ amount: 20, from: "EUR", to: "JPY" });
+  });
+
+  it("covers every Frankfurter currency", () => {
+    expect(CURRENCY_CODES).toContain("CNY");
+    expect(CURRENCY_CODES).toContain("ZAR");
+    expect(CURRENCY_CODES).toContain("KRW");
+    expect(CURRENCY_CODES).toHaveLength(30);
+  });
+
   it("treats a bare number as CAD", () => {
     expect(parseMoney("100")).toEqual({ amount: 100, from: "CAD" });
+  });
+
+  it("formats a pair and the rest of the currencies", () => {
+    const summary = formatConversion({ amount: 100, from: "CAD", to: "EUR" }, { EUR: 65, GBP: 55, USD: 73, JPY: 11000 });
+    expect(summary).toMatch(/65/);
+    expect(summary).toMatch(/JPY/);
+    expect(summary).toMatch(/Every other currency/);
   });
 
   it("detects money questions", () => {

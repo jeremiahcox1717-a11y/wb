@@ -18,7 +18,7 @@ export const currencyCalculatorSection: SiteSection = {
   id: "currency",
   type: "currencyCalculator",
   heading: "Currency calculator",
-  body: "Type an amount like 100 CAD. I will tell you the euros and pounds.",
+  body: "Pick a from and to currency, convert either way, and see every other live rate.",
 };
 
 export const notebookSection: SiteSection = {
