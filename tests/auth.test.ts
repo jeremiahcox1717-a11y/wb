@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import {
   createSessionToken,
+  isSameOrigin,
   isStudioConfigured,
   passwordsMatch,
   verifySessionToken,
@@ -29,5 +30,15 @@ describe("studio auth", () => {
     expect(verifySessionToken(token)).toBe(true);
     expect(verifySessionToken(`${token}x`)).toBe(false);
     expect(verifySessionToken("")).toBe(false);
+  });
+
+  it("treats the Host header as same-origin even when request.url differs", () => {
+    const request = new Request("http://0.0.0.0:3000/api/auth/login", {
+      headers: {
+        origin: "http://127.0.0.1:3000",
+        host: "127.0.0.1:3000",
+      },
+    });
+    expect(isSameOrigin(request)).toBe(true);
   });
 });
