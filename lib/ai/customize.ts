@@ -251,14 +251,13 @@ export async function customizeSite(input: {
         engine: "llm",
         changed: false,
       };
-    } catch (error) {
-      const warning = error instanceof Error ? error.message : "The language model failed.";
+    } catch {
       return {
         site: input.site,
         reply: answerLocally(input.site, input.message),
         engine: "local",
         changed: false,
-        warning,
+        warning: "The saved AI key did not work, so I answered with the built-in helper. Fix it in Studio → Settings for fuller answers.",
       };
     }
   }
