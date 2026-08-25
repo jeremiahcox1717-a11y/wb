@@ -24,9 +24,9 @@ export function DomainHits({
           key={hit.host}
           className={compact ? "px-2 py-2" : "px-3 py-3"}
           style={{
-            border: hit.status === "available" ? "1px solid #f2f2f0" : "1px solid var(--wb-border, #2a2a2c)",
-            borderRadius: "var(--wb-radius-btn, 2px)",
-            background: hit.status === "available" ? "#161617" : "transparent",
+            border: hit.status === "available" ? "1px solid var(--wb-accent, #d4a574)" : "1px solid var(--wb-border, #3a3128)",
+            borderRadius: "var(--wb-radius-btn, 18px)",
+            background: hit.status === "available" ? "var(--wb-surface, #1e1914)" : "transparent",
           }}
         >
           <p
@@ -37,7 +37,7 @@ export function DomainHits({
           </p>
           <p
             className={compact ? "mt-0.5 text-[10px] tracking-[0.14em] uppercase" : "mt-1 text-xs tracking-[0.16em] uppercase"}
-            style={{ color: hit.status === "available" ? "#f2f2f0" : "var(--wb-muted, #a3a39b)" }}
+            style={{ color: hit.status === "available" ? "var(--wb-accent, #d4a574)" : "var(--wb-muted, #b9a89a)" }}
           >
             {statusCopy(hit.status)}
           </p>
@@ -50,10 +50,10 @@ export function DomainHits({
                 rel="noreferrer"
                 className={compact ? "px-2 py-1 text-[10px] font-semibold no-underline" : "px-3 py-1.5 text-xs font-semibold no-underline"}
                 style={{
-                  background: shop.name === "GoDaddy" && hit.status !== "taken" ? "#f2f2f0" : "transparent",
-                  color: shop.name === "GoDaddy" && hit.status !== "taken" ? "#111111" : "#f2f2f0",
-                  border: "1px solid #f2f2f0",
-                  borderRadius: "var(--wb-radius-btn, 2px)",
+                  background: shop.name === "GoDaddy" && hit.status !== "taken" ? "var(--wb-accent, #d4a574)" : "transparent",
+                  color: shop.name === "GoDaddy" && hit.status !== "taken" ? "var(--wb-accent-text, #1a140f)" : "var(--wb-accent, #d4a574)",
+                  border: "1px solid var(--wb-accent, #d4a574)",
+                  borderRadius: "var(--wb-radius-btn, 18px)",
                 }}
               >
                 Get on {shop.name}

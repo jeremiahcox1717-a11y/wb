@@ -75,14 +75,14 @@ export function UrlDesk() {
   }
 
   return (
-    <div id="url-desk" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-2 text-[#f3f3f1]">
-      <p className="text-xs leading-5 text-[#a3a39b]">
+    <div id="url-desk" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-2 text-[#f3eee8]">
+      <p className="text-xs leading-5 text-[#b9a89a]">
         Search a real public .com, then buy it at GoDaddy so it works everywhere. This site cannot issue the domain itself. Or paste a link for YES/NO.
       </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <form onSubmit={onMake} className="space-y-1.5">
-          <label htmlFor="url-make-input" className="block text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
+          <label htmlFor="url-make-input" className="block text-[10px] tracking-[0.2em] text-[#7d7368] uppercase">
             Search a public domain
           </label>
           <input
@@ -96,14 +96,14 @@ export function UrlDesk() {
             id="url-make-submit"
             type="submit"
             disabled={busy || !makeInput.trim()}
-            className="bg-[#f2f2f0] px-2.5 py-1.5 text-[11px] font-semibold text-[#111111] disabled:opacity-50"
+            className="bg-[#d4a574] px-2.5 py-1.5 text-[11px] font-semibold text-[#1a140f] disabled:opacity-50"
           >
             {busy ? "Searching…" : "Search"}
           </button>
         </form>
 
         <form onSubmit={onScan} className="space-y-1.5">
-          <label htmlFor="url-scan-input" className="block text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
+          <label htmlFor="url-scan-input" className="block text-[10px] tracking-[0.2em] text-[#7d7368] uppercase">
             Scan a URL
           </label>
           <input
@@ -117,7 +117,7 @@ export function UrlDesk() {
             id="url-scan-submit"
             type="submit"
             disabled={busy || !scanInput.trim()}
-            className="border border-[#f2f2f0] px-2.5 py-1.5 text-[11px] font-semibold text-[#f2f2f0] disabled:opacity-50"
+            className="border border-[#d4a574] px-2.5 py-1.5 text-[11px] font-semibold text-[#d4a574] disabled:opacity-50"
           >
             {busy ? "Working…" : "Scan"}
           </button>
@@ -144,7 +144,7 @@ export function UrlDesk() {
           >
             {result.answer === "yes" ? "YES" : "NO"}
           </p>
-          {result.url ? <p className="mt-1 break-all text-[11px] text-[#a3a39b]">{result.url}</p> : null}
+          {result.url ? <p className="mt-1 break-all text-[11px] text-[#b9a89a]">{result.url}</p> : null}
           <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-xs text-[#d7cdc2]">
             {result.reasons.map((reason) => (
               <li key={reason}>{reason}</li>

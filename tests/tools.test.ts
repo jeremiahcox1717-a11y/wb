@@ -80,8 +80,9 @@ describe("default site tools", () => {
     expect(types).toContain("notebook");
   });
 
-  it("starts in black and white", () => {
-    expect(defaultSite().theme.background).toBe("#0b0b0c");
-    expect(defaultSite().theme.accent).toBe("#f2f2f0");
+  it("starts with the copper Jordan Bennett theme", () => {
+    expect(defaultSite().theme.background).toBe("#14110e");
+    expect(defaultSite().theme.accent).toBe("#d4a574");
+    expect(defaultSite().identity.ownerName).toBe("Jordan Bennett");
   });
 });

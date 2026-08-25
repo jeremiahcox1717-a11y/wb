@@ -71,9 +71,9 @@ export function UrlMakerSection({ heading, body }: { heading?: string; body?: st
           placeholder="Jordan Bennett"
           className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
           style={{
-            background: "#111111",
-            border: "2px solid #f2f2f0",
-            color: "#f3f3f1",
+            background: "var(--wb-bg, #14110e)",
+            border: "2px solid var(--wb-accent, #d4a574)",
+            color: "var(--wb-text, #f4ece3)",
             borderRadius: "var(--wb-radius-btn)",
           }}
         />

@@ -8,12 +8,11 @@ type Turn = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
   "What's the time?",
-  "Turn this into a bakery called Hearth & Crumb",
   "What can you do?",
-  "Make a dark editorial portfolio",
-  "Rebuild it as a coffee shop with ocean colors",
-  "Add pricing and an FAQ, keep everything else",
-  "My email is hello@example.com and I’m in Austin",
+  "Make the heading Jordan Bennett",
+  "Use the copper palette",
+  "Add an FAQ, keep everything else",
+  "My email is hello@example.com",
 ];
 
 export function StudioApp({

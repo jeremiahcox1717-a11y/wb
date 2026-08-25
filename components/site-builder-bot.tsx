@@ -7,7 +7,7 @@ import { extractUrl, formatAnswer, looksLikeUrlMake, looksLikeUrlQuestion, type 
 
 type Turn = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = ["What's the time?", "What can you do?", "Build a bakery site"];
+const SUGGESTIONS = ["What's the time?", "What can you do?", "Make the heading Jordan Bennett"];
 
 export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [input, setInput] = useState("");
@@ -116,31 +116,31 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   return (
     <div id="builder-bot" className="flex min-h-0 flex-1 flex-col">
       <header className="flex items-center gap-2 border-b border-[#2a2a32] px-3 py-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f2f2f0] text-[11px] font-semibold text-[#111111]">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#d4a574] text-[11px] font-semibold text-[#1a140f]">
           AI
         </span>
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.24em] text-[#f2f2f0] uppercase">Website builder</p>
-          <p className="text-xs text-[#a3a39b]">{busy ? "Working…" : "Ask a question or tell me what to change"}</p>
+          <p className="text-[10px] font-semibold tracking-[0.24em] text-[#d4a574] uppercase">Website builder</p>
+          <p className="text-xs text-[#b9a89a]">{busy ? "Working…" : "Ask a question or tell me what to change"}</p>
         </div>
       </header>
 
       <div ref={scroller} className="flex-1 space-y-2 overflow-y-auto px-3 py-2">
         {turns.map((turn, index) => (
           <div key={`${turn.role}-${index}`} className={turn.role === "user" ? "ml-6" : "mr-4"}>
-            <p className="text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
+            <p className="text-[10px] tracking-[0.2em] text-[#7d7368] uppercase">
               {turn.role === "user" ? "You" : "Builder bot"}
             </p>
             <p
               className="mt-0.5 whitespace-pre-wrap text-sm leading-5"
-              style={{ color: turn.role === "user" ? "#f3f3f1" : "#c8c8c4" }}
+              style={{ color: turn.role === "user" ? "#f3eee8" : "#d7cdc2" }}
             >
               {turn.content}
             </p>
           </div>
         ))}
         {busy ? (
-          <p className="text-[10px] tracking-wide text-[#f2f2f0] uppercase">Working…</p>
+          <p className="text-[10px] tracking-wide text-[#d4a574] uppercase">Working…</p>
         ) : null}
       </div>
 
@@ -150,17 +150,17 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             key={item}
             type="button"
             id={
-              item.includes("bakery")
-                ? "builder-suggestion-bakery"
-                : item.toLowerCase().includes("time")
-                  ? "builder-suggestion-time"
-                  : item.includes("What can you")
-                    ? "builder-suggestion-ask"
+              item.toLowerCase().includes("time")
+                ? "builder-suggestion-time"
+                : item.includes("What can you")
+                  ? "builder-suggestion-ask"
+                  : item.includes("heading")
+                    ? "builder-suggestion-heading"
                     : undefined
             }
             disabled={busy}
             onClick={() => send(item)}
-            className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#a3a39b] hover:border-[#f2f2f0] hover:text-[#f3f3f1] disabled:opacity-50"
+            className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#b9a89a] hover:border-[#d4a574] hover:text-[#f3eee8] disabled:opacity-50"
           >
             {item}
           </button>
@@ -182,14 +182,14 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             }
           }}
           rows={1}
-          placeholder="Make the heading Hello. Or build me a bakery…"
+          placeholder="Ask a question, or tell me what to change…"
           className="min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-[#5c564e]"
         />
         <button
           id="builder-bot-send"
           type="submit"
           disabled={busy || !input.trim()}
-          className="shrink-0 bg-[#f2f2f0] px-3 py-1.5 text-xs font-semibold text-[#111111] disabled:opacity-50"
+          className="shrink-0 bg-[#d4a574] px-3 py-1.5 text-xs font-semibold text-[#1a140f] disabled:opacity-50"
         >
           Send
         </button>

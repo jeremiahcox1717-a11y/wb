@@ -23,9 +23,9 @@ type Conversion = {
 };
 
 const fieldStyle = {
-  background: "#111111",
-  border: "2px solid #f2f2f0",
-  color: "#f3f3f1",
+  background: "var(--wb-bg, #14110e)",
+  border: "2px solid var(--wb-accent, #d4a574)",
+  color: "var(--wb-text, #f4ece3)",
   borderRadius: "var(--wb-radius-btn)",
 } as const;
 
@@ -207,7 +207,7 @@ export function CurrencyCalculator({ heading, body }: { heading?: string; body?:
             onClick={swap}
             className="h-12 shrink-0 px-4 text-xs font-semibold"
             style={{
-              border: "2px solid #f2f2f0",
+              border: "2px solid var(--wb-accent, #d4a574)",
               borderRadius: "var(--wb-radius-btn)",
               color: "var(--wb-text)",
             }}

@@ -96,21 +96,21 @@ export const palettes: Record<string, Partial<SiteTheme> & { label: string }> = 
 };
 
 export function defaultSite(): Site {
-  const theme = palettes.noir;
+  const theme = palettes.copper;
   return ensureScannerSections({
     version: 1,
     updatedAt: new Date().toISOString(),
     identity: {
       siteName: "Jordan Bennett",
       ownerName: "Jordan Bennett",
-      tagline: "A living website. Tell it what to become.",
+      tagline: "A private site for personal use.",
       location: "",
       socials: [],
     },
     seo: {
       title: "Jordan Bennett",
       description:
-        "A personal site that can be redesigned in conversation. Public to the world, shaped in a private studio.",
+        "Jordan Bennett’s private site. Locked behind a password, built for personal use.",
     },
     theme: {
       background: theme.background!,
@@ -139,19 +139,18 @@ export function defaultSite(): Site {
           {
             type: "hero",
             layout: "cinematic",
-            kicker: "Private site · owner only",
+            kicker: "Private · owner only",
             heading: "Jordan Bennett",
             subheading:
-              "This page is locked. Change the colors, the words, the whole business — it updates the moment you ask, and only you can see it.",
-            primaryCta: { label: "See the work", href: "#work" },
+              "This is your private homepage. Only you can open it. Ask the builder to change a heading, a color, or a section — it updates for you alone.",
+            primaryCta: { label: "See the tools", href: "#work" },
             secondaryCta: { label: "Get in touch", href: "#contact" },
           },
           {
             id: "work",
             type: "features",
-            heading: "What this space can hold",
-            subheading:
-              "Ask the studio to turn this into a bakery, a portfolio, a restaurant, or anything else.",
+            heading: "What this space is for",
+            subheading: "A private page for Jordan Bennett. Tools on this site are for you, not a shop.",
             items: [
               {
                 title: "A private homepage",
@@ -163,7 +162,7 @@ export function defaultSite(): Site {
               },
               {
                 title: "Live customizations",
-                body: "Say “make it a coffee shop with ocean colors.” The live site becomes that, right away.",
+                body: "Tell the builder what to change. The page updates for you, and only you see it.",
               },
             ],
           },
@@ -171,8 +170,8 @@ export function defaultSite(): Site {
             id: "about",
             type: "richtext",
             eyebrow: "About",
-            heading: "Start with a sentence. Keep going from there.",
-            body: "Replace this with your story. Name the business. Add photos, pricing, testimonials, a contact section — or wipe it and begin again. Only you see the latest version.",
+            heading: "A short note about you.",
+            body: "This site is for Jordan Bennett’s personal use. Replace this with your story when you want. It is not a shop, and nobody else can see it.",
           },
           {
             type: "stats",
@@ -190,7 +189,7 @@ export function defaultSite(): Site {
           },
           {
             type: "footer",
-            note: "Built in a private studio. Shown only to you.",
+            note: "Jordan Bennett · private, owner only.",
           },
         ],
       },

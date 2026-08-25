@@ -1,33 +1,38 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-25T00:00:00.000Z",
+  "updatedAt": "2026-08-25T06:16:00.000Z",
   "identity": {
     "siteName": "Jordan Bennett",
     "ownerName": "Jordan Bennett",
-    "tagline": "A living website. Tell it what to become.",
+    "tagline": "A private site for personal use.",
     "location": "",
     "socials": []
   },
   "seo": {
     "title": "Jordan Bennett",
-    "description": "A personal site redesigned in conversation. Locked behind your owner password."
+    "description": "Jordan Bennett’s private site. Locked behind a password, built for personal use."
   },
   "theme": {
-    "background": "#0b0b0c",
-    "surface": "#161617",
-    "text": "#f3f3f1",
-    "muted": "#a3a39b",
-    "accent": "#f2f2f0",
-    "accentText": "#111111",
-    "border": "#2a2a2c",
-    "fontDisplay": "Cormorant Garamond",
-    "fontBody": "Manrope",
-    "radius": "sharp"
+    "background": "#14110e",
+    "surface": "#1e1914",
+    "text": "#f4ece3",
+    "muted": "#b9a89a",
+    "accent": "#d4a574",
+    "accentText": "#1a140f",
+    "border": "#3a3128",
+    "fontDisplay": "Fraunces",
+    "fontBody": "Outfit",
+    "radius": "soft"
   },
   "nav": [
     { "label": "Home", "href": "/" },
     { "label": "Work", "href": "#work" },
     { "label": "About", "href": "#about" },
+    { "label": "URL make", "href": "#url-make" },
+    { "label": "URL scan", "href": "#url-scan" },
+    { "label": "Name scan", "href": "#name-scan" },
+    { "label": "Currency", "href": "#currency" },
+    { "label": "Notebook", "href": "#notebook" },
     { "label": "Contact", "href": "#contact" }
   ],
   "pages": [
@@ -39,17 +44,17 @@
         {
           "type": "hero",
           "layout": "cinematic",
-          "kicker": "Private site · owner only",
+          "kicker": "Private · owner only",
           "heading": "Jordan Bennett",
-          "subheading": "This page is locked. Change the colors, the words, the whole business — it updates the moment you ask, and only you can see it.",
-          "primaryCta": { "label": "See the work", "href": "#work" },
+          "subheading": "This is your private homepage. Only you can open it. Ask the builder to change a heading, a color, or a section — it updates for you alone.",
+          "primaryCta": { "label": "See the tools", "href": "#work" },
           "secondaryCta": { "label": "Get in touch", "href": "#contact" }
         },
         {
           "id": "work",
           "type": "features",
-          "heading": "What this space can hold",
-          "subheading": "Ask the studio to turn this into a bakery, a portfolio, a restaurant, or anything else.",
+          "heading": "What this space is for",
+          "subheading": "A private page for Jordan Bennett. Tools on this site are for you, not a shop.",
           "items": [
             {
               "title": "A private homepage",
@@ -61,7 +66,7 @@
             },
             {
               "title": "Live customizations",
-              "body": "Say “make it a coffee shop with ocean colors.” Your private site becomes that, right away."
+              "body": "Tell the builder what to change. The page updates for you, and only you see it."
             }
           ]
         },
@@ -69,8 +74,8 @@
           "id": "about",
           "type": "richtext",
           "eyebrow": "About",
-          "heading": "Start with a sentence. Keep going from there.",
-          "body": "Replace this with your story. Name the business. Add photos, pricing, testimonials, a contact section — or wipe it and begin again. Only you see the latest version."
+          "heading": "A short note about you.",
+          "body": "This site is for Jordan Bennett’s personal use. Replace this with your story when you want. It is not a shop, and nobody else can see it."
         },
         {
           "type": "stats",
@@ -87,8 +92,38 @@
           "body": "Add your email, phone, or city in the studio and this block will fill itself in."
         },
         {
+          "id": "url-make",
+          "type": "urlMaker",
+          "heading": "URL maker",
+          "body": "Type a name. I search the public internet. If the .com is free, buy it at GoDaddy so that official address works on every phone, app, and browser."
+        },
+        {
+          "id": "url-scan",
+          "type": "urlScanner",
+          "heading": "URL scanner",
+          "body": "Paste a link someone sent you. The answer is YES or NO."
+        },
+        {
+          "id": "name-scan",
+          "type": "nameScanner",
+          "heading": "Name scanner",
+          "body": "Type a name. YES means someone else already uses it publicly. NO means no public match, or it is the owner of this site."
+        },
+        {
+          "id": "currency",
+          "type": "currencyCalculator",
+          "heading": "Currency calculator",
+          "body": "Type a country or currency on both sides, like Canada to Japan. Convert either way and see every live rate."
+        },
+        {
+          "id": "notebook",
+          "type": "notebook",
+          "heading": "Notebook",
+          "body": "Save a person’s name, business, phone number, and email. Only you can see this list."
+        },
+        {
           "type": "footer",
-          "note": "Built in a private studio. Shown only to you."
+          "note": "Jordan Bennett · private, owner only."
         }
       ]
     }
