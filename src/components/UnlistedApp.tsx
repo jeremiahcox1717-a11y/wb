@@ -357,7 +357,8 @@ export function UnlistedApp() {
                   <div>
                     <h2 className="stamp text-3xl italic">Leads in {hunt.lookup.postcode}</h2>
                     <p className="text-sm text-[var(--muted)]">
-                      Scanned {hunt.scanned} local listings · {hunt.leads.length} look underbuilt
+                      Scanned {hunt.scanned} local listings · {hunt.qualified} look underbuilt
+                      {hunt.leads.length < hunt.qualified ? ` · showing the best ${hunt.leads.length}` : ""}
                       {hunt.googleEnabled ? " · Google profiles checked" : " · add a Google key below to auto-check profiles"}
                     </p>
                   </div>

@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       radiusMeters,
       mode,
       scanned: hunted.scanned,
+      qualified: hunted.qualified,
       leads: hunted.leads,
       googleEnabled: Boolean(googleKey),
     });

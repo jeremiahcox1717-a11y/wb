@@ -97,6 +97,7 @@ export async function enrichWithGoogle(leads: BusinessLead[], key: string, origi
       email: lead.email,
       instagram: lead.instagram,
       facebook: lead.facebook,
+      category: lead.category,
     });
     lead.score = scored.score;
     lead.kind = scored.kind;

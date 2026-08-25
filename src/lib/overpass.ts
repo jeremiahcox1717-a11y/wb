@@ -1,5 +1,6 @@
 import { classifyPresence, instagramHandle } from "./web";
 import { keepForMode, scoreLead } from "./score";
+import { isSkipBusiness } from "./chains";
 import type { BusinessLead, GoogleStatus, HuntMode } from "./types";
 
 const OVERPASS_ENDPOINTS = [
@@ -113,6 +114,7 @@ function toLead(el: OsmElement): BusinessLead | null {
   const tags = el.tags ?? {};
   const name = tags.name || tags.brand;
   if (!name) return null;
+  if (isSkipBusiness(name, tags)) return null;
   const lat = el.lat ?? el.center?.lat;
   const lon = el.lon ?? el.center?.lon ?? el.center?.lng;
   if (typeof lat !== "number" || typeof lon !== "number") return null;
@@ -129,6 +131,7 @@ function toLead(el: OsmElement): BusinessLead | null {
     email: tagEmail(tags) || undefined,
     instagram,
     facebook: tagFacebook(tags) || undefined,
+    category: categoryOf(tags),
   });
 
   return {
@@ -160,7 +163,7 @@ export async function huntArea(opts: {
   radiusMeters: number;
   mode: HuntMode;
   postcode?: string;
-}): Promise<{ scanned: number; leads: BusinessLead[] }> {
+}): Promise<{ scanned: number; qualified: number; leads: BusinessLead[] }> {
   const elements = await overpass(buildQuery(opts.lat, opts.lon, opts.radiusMeters));
   const seen = new Set<string>();
   const leads: BusinessLead[] = [];
@@ -175,5 +178,5 @@ export async function huntArea(opts: {
     leads.push(lead);
   }
   leads.sort((a, b) => b.score - a.score);
-  return { scanned: elements.length, leads };
+  return { scanned: elements.length, qualified: leads.length, leads: leads.slice(0, 48) };
 }

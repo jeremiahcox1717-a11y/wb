@@ -76,6 +76,7 @@ export type HuntResult = {
   radiusMeters: number;
   mode: HuntMode;
   scanned: number;
+  qualified: number;
   leads: BusinessLead[];
   googleEnabled: boolean;
 };

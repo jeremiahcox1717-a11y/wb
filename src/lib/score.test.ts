@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { classifyPresence, isBookingUrl, isSocialUrl } from "./web";
 import { keepForMode, scoreLead } from "./score";
+import { isSkipBusiness } from "./chains";
 
 describe("presence classification", () => {
   it("treats empty as none", () => {
@@ -60,5 +61,13 @@ describe("lead scoring", () => {
       keepForMode({ kind: "instagram", presence: "social_only", instagram: "hello", google: "unchecked" }, "instagram"),
       true,
     );
+  });
+});
+
+describe("chain filtering", () => {
+  it("drops starbucks and embassies, keeps independents", () => {
+    assert.equal(isSkipBusiness("Starbucks", { amenity: "cafe" }), true);
+    assert.equal(isSkipBusiness("Embassy of France", { office: "diplomatic" }), true);
+    assert.equal(isSkipBusiness("Riverside Tyres", { shop: "car_repair" }), false);
   });
 });

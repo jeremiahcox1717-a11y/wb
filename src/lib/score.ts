@@ -1,4 +1,5 @@
 import { classifyPresence, instagramHandle } from "./web";
+import { independentBoost } from "./chains";
 import type { BusinessLead, GoogleStatus, LeadKind, Presence } from "./types";
 
 export function scoreLead(input: {
@@ -9,6 +10,7 @@ export function scoreLead(input: {
   email?: string;
   instagram?: string;
   facebook?: string;
+  category?: string;
 }): { score: number; kind: LeadKind; reasons: string[] } {
   const reasons: string[] = [];
   let score = 0;
@@ -51,6 +53,7 @@ export function scoreLead(input: {
   if (!input.facebook && !ig) {
     score += 2;
   }
+  score += independentBoost(input.category || "");
 
   let kind: LeadKind = "thin";
   if (input.google === "not_found" && input.presence !== "real_website") kind = "ghost";
