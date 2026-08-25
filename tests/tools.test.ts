@@ -48,4 +48,9 @@ describe("default site tools", () => {
     expect(types).toContain("currencyCalculator");
     expect(types).toContain("notebook");
   });
+
+  it("starts in black and white", () => {
+    expect(defaultSite().theme.background).toBe("#0b0b0c");
+    expect(defaultSite().theme.accent).toBe("#f2f2f0");
+  });
 });

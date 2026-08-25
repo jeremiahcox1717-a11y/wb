@@ -100,31 +100,31 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   return (
     <div id="builder-bot" className="flex min-h-0 flex-1 flex-col">
       <header className="flex items-center gap-2 border-b border-[#2a2a32] px-3 py-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#d4a574] text-[11px] font-semibold text-[#1a140f]">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f2f2f0] text-[11px] font-semibold text-[#111111]">
           AI
         </span>
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.24em] text-[#d4a574] uppercase">Website builder</p>
-          <p className="text-xs text-[#b9a89a]">{busy ? "Building…" : "Tell me what to build"}</p>
+          <p className="text-[10px] font-semibold tracking-[0.24em] text-[#f2f2f0] uppercase">Website builder</p>
+          <p className="text-xs text-[#a3a39b]">{busy ? "Building…" : "Tell me what to build"}</p>
         </div>
       </header>
 
       <div ref={scroller} className="flex-1 space-y-2 overflow-y-auto px-3 py-2">
         {turns.map((turn, index) => (
           <div key={`${turn.role}-${index}`} className={turn.role === "user" ? "ml-6" : "mr-4"}>
-            <p className="text-[10px] tracking-[0.2em] text-[#7d7368] uppercase">
+            <p className="text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
               {turn.role === "user" ? "You" : "Builder bot"}
             </p>
             <p
               className="mt-0.5 whitespace-pre-wrap text-sm leading-5"
-              style={{ color: turn.role === "user" ? "#f3eee8" : "#d7cdc2" }}
+              style={{ color: turn.role === "user" ? "#f3f3f1" : "#c8c8c4" }}
             >
               {turn.content}
             </p>
           </div>
         ))}
         {busy ? (
-          <p className="text-[10px] tracking-wide text-[#d4a574] uppercase">Rebuilding the website…</p>
+          <p className="text-[10px] tracking-wide text-[#f2f2f0] uppercase">Rebuilding the website…</p>
         ) : null}
       </div>
 
@@ -136,7 +136,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             id={item.includes("bakery") ? "builder-suggestion-bakery" : undefined}
             disabled={busy}
             onClick={() => send(item)}
-            className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#b9a89a] hover:border-[#d4a574] hover:text-[#f3eee8] disabled:opacity-50"
+            className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#a3a39b] hover:border-[#f2f2f0] hover:text-[#f3f3f1] disabled:opacity-50"
           >
             {item}
           </button>
@@ -165,7 +165,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           id="builder-bot-send"
           type="submit"
           disabled={busy || !input.trim()}
-          className="shrink-0 bg-[#d4a574] px-3 py-1.5 text-xs font-semibold text-[#1a140f] disabled:opacity-50"
+          className="shrink-0 bg-[#f2f2f0] px-3 py-1.5 text-xs font-semibold text-[#111111] disabled:opacity-50"
         >
           Build it
         </button>

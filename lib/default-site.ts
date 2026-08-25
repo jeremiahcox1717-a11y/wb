@@ -96,7 +96,7 @@ export const palettes: Record<string, Partial<SiteTheme> & { label: string }> = 
 };
 
 export function defaultSite(): Site {
-  const theme = palettes.copper;
+  const theme = palettes.noir;
   return ensureScannerSections({
     version: 1,
     updatedAt: new Date().toISOString(),
