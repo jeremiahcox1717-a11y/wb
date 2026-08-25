@@ -1,12 +1,100 @@
 import type { Site } from "../schema";
 
+const CLOCK_ZONES = [
+  { id: "Europe/London", label: "London" },
+  { id: "America/Toronto", label: "Toronto" },
+  { id: "America/Vancouver", label: "Vancouver" },
+  { id: "UTC", label: "UTC" },
+] as const;
+
+function formatStamp(timeZone: string, now = new Date()) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(now);
+}
+
+function preferredZone(site: Site) {
+  const location = `${site.identity.location || ""} ${site.identity.tagline || ""}`.toLowerCase();
+  if (/\bvancouver|bc\b|british columbia/.test(location)) return CLOCK_ZONES[2];
+  if (/\btoronto|ontario|montreal|ottawa|calgary|canada/.test(location)) return CLOCK_ZONES[1];
+  if (/\blondon|uk\b|united kingdom|england|britain/.test(location)) return CLOCK_ZONES[0];
+  return CLOCK_ZONES[0];
+}
+
+export function currentClock(site: Site, now = new Date()) {
+  const main = preferredZone(site);
+  const others = CLOCK_ZONES.filter((zone) => zone.id !== main.id);
+  return {
+    main: `${formatStamp(main.id, now)} in ${main.label}`,
+    extra: others.map((zone) => `${formatStamp(zone.id, now)} ${zone.label}`).join(" · "),
+    iso: now.toISOString(),
+  };
+}
+
+export function tryFactualAnswer(site: Site, message: string, now = new Date()): string | null {
+  const text = message.trim();
+  const lower = text.toLowerCase().replace(/[’]/g, "'");
+
+  const asksTime =
+    /\b(what(?:'?s| is)|whats|tell me|do you know)\b.{0,24}\b(the )?time\b/.test(lower) ||
+    /\bwhat time is it\b/.test(lower) ||
+    /\bcurrent time\b/.test(lower) ||
+    /\btime (?:is it|please|now)\b/.test(lower);
+  const asksDate =
+    /\b(what(?:'?s| is)|whats|tell me)\b.{0,24}\b(the )?(date|day)\b/.test(lower) ||
+    /\bwhat day is it\b/.test(lower) ||
+    /\bwhat(?:'?s| is) today\b/.test(lower);
+  if (asksTime || asksDate) {
+    const clock = currentClock(site, now);
+    if (asksTime && !asksDate) {
+      return `It's ${clock.main}. Also: ${clock.extra}.`;
+    }
+    if (asksDate && !asksTime) {
+      return `Today is ${clock.main}.`;
+    }
+    return `It's ${clock.main}. Also: ${clock.extra}.`;
+  }
+
+  const math = lower
+    .replace(/what(?:'?s| is)|whats|calculate|compute|=/g, " ")
+    .trim()
+    .match(/^(-?\d+(?:\.\d+)?)\s*([+\-x×*/])\s*(-?\d+(?:\.\d+)?)\s*\??$/);
+  if (math) {
+    const left = Number(math[1]);
+    const right = Number(math[3]);
+    const op = math[2];
+    let value: number | null = null;
+    if (op === "+") value = left + right;
+    if (op === "-") value = left - right;
+    if (op === "*" || op === "x" || op === "×") value = left * right;
+    if ((op === "/" || op === "÷") && right !== 0) value = left / right;
+    if (value !== null && Number.isFinite(value)) {
+      const shown = op === "*" || op === "x" || op === "×" ? "×" : op;
+      return `${left} ${shown} ${right} = ${Number.isInteger(value) ? String(value) : String(Number(value.toFixed(4)))}`;
+    }
+  }
+
+  return null;
+}
+
 export function answerLocally(site: Site, message: string): string {
+  const fact = tryFactualAnswer(site, message);
+  if (fact) return fact;
+
   const text = message.trim();
   const lower = text.toLowerCase();
   const name = site.identity.ownerName || site.identity.siteName || "the owner";
 
   if (/^(hi|hello|hey|yo|sup)\b/i.test(text)) {
-    return `Hi ${name.split(" ")[0]}. Ask me a question, or tell me what to build on this private site.`;
+    return `Hi ${name.split(" ")[0]}. Ask me anything — the time, a question, or what to build on this private site.`;
   }
 
   if (/\b(thank|thanks|thx)\b/i.test(lower)) {
@@ -15,9 +103,9 @@ export function answerLocally(site: Site, message: string): string {
 
   if (/\b(what can you do|help|how (?:do i|does this) work|what is this)\b/i.test(lower)) {
     return [
-      "You can ask me questions here, and I will answer.",
+      "Ask me questions here. Try “what’s the time?”, money like 100 CAD to EUR, or a URL to scan.",
       "You can also tell me what website to build and I will update this private page.",
-      "On the page: URL scanner (YES/NO), name scanner, currency converter (type or pick both currencies), and a notebook for names and contacts.",
+      "On the page: URL scanner, name scanner, currency converter, and a notebook.",
     ].join(" ");
   }
 
@@ -49,9 +137,9 @@ export function answerLocally(site: Site, message: string): string {
     return "Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio — or a color/theme. I will rebuild the live page. Questions stay as answers and do not change the site.";
   }
 
+  const clock = currentClock(site);
   return [
-    `I can answer questions, and I can rebuild this private site when you ask.`,
-    site.identity.tagline ? `This page is “${site.identity.siteName}” — ${site.identity.tagline}` : `This page is “${site.identity.siteName}.”`,
-    "Ask anything you want. For a full language-model conversation, add an AI key in Studio → Settings.",
+    "I can answer that kind of question when a working AI key is in Studio → Settings.",
+    `I can still tell you the time (it’s ${clock.main}), convert money, scan a URL, or rebuild this site if you ask.`,
   ].join(" ");
 }

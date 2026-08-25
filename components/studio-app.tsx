@@ -7,6 +7,7 @@ import type { Site } from "@/lib/schema";
 type Turn = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
+  "What's the time?",
   "Turn this into a bakery called Hearth & Crumb",
   "What can you do?",
   "Make a dark editorial portfolio",

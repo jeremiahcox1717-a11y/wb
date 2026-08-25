@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyLocalDesign } from "@/lib/ai/local-designer";
+import { tryFactualAnswer } from "@/lib/ai/answer";
 import { defaultSite } from "@/lib/default-site";
 import { parseSite } from "@/lib/schema";
 import { templates } from "@/lib/ai/templates";
@@ -57,6 +58,20 @@ describe("local designer", () => {
     const { site, changed } = applyLocalDesign(base, "hello");
     expect(changed).toBe(false);
     expect(site.identity.tagline).toBe(base.identity.tagline);
+  });
+
+  it("answers the time without changing the site", () => {
+    const now = new Date("2026-08-25T04:58:00.000Z");
+    const reply = tryFactualAnswer(defaultSite(), "whats the time", now);
+    expect(reply).toMatch(/2026/);
+    expect(reply).toMatch(/London|UTC|Toronto/i);
+    const { site, changed } = applyLocalDesign(defaultSite(), "What's the time?");
+    expect(changed).toBe(false);
+    expect(site.identity.siteName).toBe("Jordan Bennett");
+  });
+
+  it("does simple math when asked", () => {
+    expect(tryFactualAnswer(defaultSite(), "what's 12 * 8")).toBe("12 × 8 = 96");
   });
 
   it("every built-in template is valid site JSON", () => {

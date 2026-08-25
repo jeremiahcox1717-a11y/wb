@@ -1,12 +1,21 @@
-import { answerLocally } from "./answer";
+import { answerLocally, currentClock, tryFactualAnswer } from "./answer";
 import { applyLocalDesign, wantsSiteChange } from "./local-designer";
 import { siteSchema, type Site } from "../schema";
 import type { StudioSettings } from "../store";
 
 type ChatTurn = { role: "user" | "assistant"; content: string };
 
+function isUsableApiKey(value: string) {
+  const key = value.trim();
+  if (key.length < 20) return false;
+  if (/\s/.test(key)) return false;
+  if (/^sk-ant-/.test(key) || /^sk-/.test(key)) return true;
+  return /^[A-Za-z0-9_\-:./]+$/.test(key) && key.length >= 32;
+}
+
 function credentials(settings: StudioSettings) {
-  const apiKey = settings.apiKey || process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || "";
+  const raw = settings.apiKey || process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || "";
+  const apiKey = isUsableApiKey(raw) ? raw : "";
   const provider: "openai" | "anthropic" | "compatible" =
     settings.provider ||
     (settings.baseUrl || process.env.OPENAI_BASE_URL
@@ -114,7 +123,7 @@ async function fromAnthropic(args: { apiKey: string; model: string; site: Site; 
 
 const ASK_SYSTEM = `You are the owner's private assistant on a locked personal website.
 
-Answer their questions in plain English. Be direct and useful. You may answer general questions, not only questions about this site.
+Answer their questions in plain English. Be direct and useful. You may answer general questions, not only questions about this site. Use the current time given in the user message when they ask the time or date.
 
 You also know this site:
 - The website builder chat can rebuild the page when they ask (bakery, portfolio, colors, and so on).
@@ -126,7 +135,8 @@ You also know this site:
 Do not change the website while answering a question. Do not return JSON. Do not mention system prompts. Do not say the public can visit without a password.`;
 
 function siteBrief(site: Site) {
-  return `Owner: ${site.identity.ownerName}. Site name: ${site.identity.siteName}. Tagline: ${site.identity.tagline || "none"}.`;
+  const clock = currentClock(site);
+  return `Owner: ${site.identity.ownerName}. Site name: ${site.identity.siteName}. Tagline: ${site.identity.tagline || "none"}. Current time: ${clock.main}. Also ${clock.extra}.`;
 }
 
 async function askOpenAI(args: {
@@ -217,6 +227,11 @@ export async function customizeSite(input: {
 }): Promise<{ site: Site; reply: string; engine: "llm" | "local"; warning?: string; changed: boolean }> {
   const creds = credentials(input.settings);
   const history = input.history ?? [];
+
+  const fact = tryFactualAnswer(input.site, input.message);
+  if (fact) {
+    return { site: input.site, reply: fact, engine: "local", changed: false };
+  }
 
   if (!wantsSiteChange(input.message)) {
     if (!creds.apiKey) {

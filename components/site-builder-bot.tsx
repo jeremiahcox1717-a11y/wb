@@ -7,7 +7,7 @@ import { extractUrl, formatAnswer, looksLikeUrlQuestion, type UrlScan } from "@/
 
 type Turn = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = ["What can you do?", "Build a bakery site", "Make a photographer portfolio"];
+const SUGGESTIONS = ["What's the time?", "What can you do?", "Build a bakery site"];
 
 export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [input, setInput] = useState("");
@@ -15,7 +15,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [turns, setTurns] = useState<Turn[]>([
     {
       role: "assistant",
-      content: "Ask me anything. I can answer questions, rebuild this site, scan a URL, or convert money both ways.",
+      content: "Ask me anything — what’s the time, a question, or what to build. I can also scan a URL or convert money.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -134,7 +134,15 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           <button
             key={item}
             type="button"
-            id={item.includes("bakery") ? "builder-suggestion-bakery" : item.includes("What can you") ? "builder-suggestion-ask" : undefined}
+            id={
+              item.includes("bakery")
+                ? "builder-suggestion-bakery"
+                : item.toLowerCase().includes("time")
+                  ? "builder-suggestion-time"
+                  : item.includes("What can you")
+                    ? "builder-suggestion-ask"
+                    : undefined
+            }
             disabled={busy}
             onClick={() => send(item)}
             className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#a3a39b] hover:border-[#f2f2f0] hover:text-[#f3f3f1] disabled:opacity-50"
@@ -159,7 +167,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             }
           }}
           rows={1}
-          placeholder="Ask a question or build me a bakery website…"
+          placeholder="What’s the time? Or build me a bakery website…"
           className="min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-[#5c564e]"
         />
         <button
