@@ -1,13 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export function StudioLogin({ configured }: { configured: boolean }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  const router = useRouter();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -25,8 +23,9 @@ export function StudioLogin({ configured }: { configured: boolean }) {
         setPending(false);
         return;
       }
-      router.push("/studio");
-      router.refresh();
+      // Full navigation so the httpOnly session cookie is sent to /studio.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign("/studio");
     } catch {
       setError("Network error.");
       setPending(false);
@@ -52,6 +51,8 @@ export function StudioLogin({ configured }: { configured: boolean }) {
             <label className="mt-8 block text-xs tracking-wide text-[#b9a89a] uppercase">
               Password
               <input
+                id="studio-password"
+                name="password"
                 type="password"
                 autoComplete="current-password"
                 value={password}
@@ -61,6 +62,7 @@ export function StudioLogin({ configured }: { configured: boolean }) {
             </label>
             {error ? <p className="mt-3 text-sm text-[#e8a0a0]">{error}</p> : null}
             <button
+              id="studio-login-submit"
               type="submit"
               disabled={pending}
               className="mt-6 w-full bg-[#d4a574] py-3 text-sm font-semibold text-[#1a140f] disabled:opacity-60"

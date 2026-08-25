@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { SiteView } from "@/components/site-view";
 import type { Site } from "@/lib/schema";
 
@@ -40,7 +39,6 @@ export function StudioApp({
   const [settingsModel, setSettingsModel] = useState(model);
   const [notice, setNotice] = useState("");
   const scroller = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const home = useMemo(
     () => site.pages.find((page) => page.slug === "/") ?? site.pages[0],
     [site],
@@ -117,8 +115,8 @@ export function StudioApp({
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/studio/login");
-    router.refresh();
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/studio/login");
   }
 
   return (
@@ -196,6 +194,7 @@ export function StudioApp({
             <button
               key={item}
               type="button"
+              id={item.startsWith("Turn this into a bakery") ? "suggestion-bakery" : undefined}
               disabled={busy}
               onClick={() => send(item)}
               className="border border-[#2a2a32] px-2 py-1 text-left text-[11px] leading-4 text-[#b9a89a] hover:border-[#d4a574] hover:text-[#f3eee8]"
@@ -207,6 +206,7 @@ export function StudioApp({
 
         <form onSubmit={onSubmit} className="border-t border-[#2a2a32] p-4">
           <textarea
+            id="studio-prompt"
             value={input}
             onChange={(event) => setInput(event.target.value)}
             onKeyDown={(event) => {
@@ -224,6 +224,7 @@ export function StudioApp({
               Open public site
             </a>
             <button
+              id="studio-publish"
               type="submit"
               disabled={busy || !input.trim()}
               className="bg-[#d4a574] px-4 py-2 text-xs font-semibold text-[#1a140f] disabled:opacity-50"
