@@ -7,7 +7,7 @@ import { extractUrl, formatAnswer, looksLikeUrlQuestion, type UrlScan } from "@/
 
 type Turn = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = ["Build a bakery site", "Make a photographer portfolio"];
+const SUGGESTIONS = ["What can you do?", "Build a bakery site", "Make a photographer portfolio"];
 
 export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [input, setInput] = useState("");
@@ -15,7 +15,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [turns, setTurns] = useState<Turn[]>([
     {
       role: "assistant",
-      content: "Tell me what to build. I can also scan a URL or convert money both ways, like 100 CAD to EUR.",
+      content: "Ask me anything. I can answer questions, rebuild this site, scan a URL, or convert money both ways.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -73,17 +73,18 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
         site?: Site;
         engine?: string;
         warning?: string;
+        changed?: boolean;
       };
       if (!response.ok) {
         setTurns((current) => [...current, { role: "assistant", content: data.error || "That did not work." }]);
         return;
       }
-      if (data.site) onSite(data.site);
-      const suffix = data.engine === "local" ? " You can add an AI key in Studio → Settings for a full language model." : "";
+      if (data.site && data.changed) onSite(data.site);
+      const suffix = data.engine === "local" && data.changed ? " You can add an AI key in Studio → Settings for a full language model." : "";
       const warning = data.warning ? ` ${data.warning}` : "";
       setTurns((current) => [
         ...current,
-        { role: "assistant", content: `${data.reply || "Done — look at the site."}${suffix}${warning}` },
+        { role: "assistant", content: `${data.reply || "Done."}${suffix}${warning}` },
       ]);
     } catch {
       setTurns((current) => [...current, { role: "assistant", content: "Network error. Try again in a moment." }]);
@@ -105,7 +106,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
         </span>
         <div>
           <p className="text-[10px] font-semibold tracking-[0.24em] text-[#f2f2f0] uppercase">Website builder</p>
-          <p className="text-xs text-[#a3a39b]">{busy ? "Building…" : "Tell me what to build"}</p>
+          <p className="text-xs text-[#a3a39b]">{busy ? "Working…" : "Ask a question or tell me what to build"}</p>
         </div>
       </header>
 
@@ -124,7 +125,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           </div>
         ))}
         {busy ? (
-          <p className="text-[10px] tracking-wide text-[#f2f2f0] uppercase">Rebuilding the website…</p>
+          <p className="text-[10px] tracking-wide text-[#f2f2f0] uppercase">Working…</p>
         ) : null}
       </div>
 
@@ -133,7 +134,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           <button
             key={item}
             type="button"
-            id={item.includes("bakery") ? "builder-suggestion-bakery" : undefined}
+            id={item.includes("bakery") ? "builder-suggestion-bakery" : item.includes("What can you") ? "builder-suggestion-ask" : undefined}
             disabled={busy}
             onClick={() => send(item)}
             className="border border-[#2a2a32] px-2 py-0.5 text-left text-[11px] leading-4 text-[#a3a39b] hover:border-[#f2f2f0] hover:text-[#f3f3f1] disabled:opacity-50"
@@ -145,7 +146,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
 
       <form onSubmit={onSubmit} className="flex items-end gap-2 border-t border-[#2a2a32] p-2">
         <label className="sr-only" htmlFor="builder-bot-input">
-          Tell the bot what website to build
+          Tell the bot a question or what website to build
         </label>
         <textarea
           id="builder-bot-input"
@@ -158,7 +159,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             }
           }}
           rows={1}
-          placeholder="Build me a bakery website…"
+          placeholder="Ask a question or build me a bakery website…"
           className="min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-[#5c564e]"
         />
         <button
@@ -167,7 +168,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           disabled={busy || !input.trim()}
           className="shrink-0 bg-[#f2f2f0] px-3 py-1.5 text-xs font-semibold text-[#111111] disabled:opacity-50"
         >
-          Build it
+          Send
         </button>
       </form>
     </div>

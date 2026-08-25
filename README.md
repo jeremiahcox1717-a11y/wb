@@ -49,14 +49,15 @@ On the homepage you also get:
 
 After you sign in, the **Website builder** chat sits on the site. Type things like:
 
+- “How does the URL scanner work?”
 - “Turn this into a bakery called Hearth & Crumb”
 - “Make a dark editorial portfolio”
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-The site on the left (or above, on a phone) updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
+Ask a question and you get an answer — the page stays put. Tell it what to build and the site on the left (or above, on a phone) updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
 
-Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored.
+Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios, and the bot still answers questions about this site. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model answers and rewrites. That key is stored in `data/settings.json`, which is gitignored.
 
 ## Deploy
 

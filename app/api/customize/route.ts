@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const limited = rateLimit(`customize:${clientKey(request)}`, 30, 10 * 60 * 1000);
+  const limited = rateLimit(`customize:${clientKey(request)}`, 50, 10 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json({ error: "Slow down a little, then try again." }, { status: 429 });
   }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     | null;
   const message = body?.message?.trim() ?? "";
   if (!message) {
-    return NextResponse.json({ error: "Tell me what to change." }, { status: 400 });
+    return NextResponse.json({ error: "Ask a question or tell me what to change." }, { status: 400 });
   }
   if (message.length > 4000) {
     return NextResponse.json({ error: "That request is too long." }, { status: 400 });
@@ -40,12 +40,13 @@ export async function POST(request: Request) {
     history: Array.isArray(body?.history) ? body.history.slice(-8) : [],
     settings,
   });
-  const site = await writeSite(result.site);
-  revalidatePath("/", "layout");
+  const site = result.changed ? await writeSite(result.site) : current;
+  if (result.changed) revalidatePath("/", "layout");
   return NextResponse.json({
     reply: result.reply,
     site,
     engine: result.engine,
     warning: result.warning,
+    changed: result.changed,
   });
 }

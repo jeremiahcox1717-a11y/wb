@@ -8,6 +8,7 @@ type Turn = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
   "Turn this into a bakery called Hearth & Crumb",
+  "What can you do?",
   "Make a dark editorial portfolio",
   "Rebuild it as a coffee shop with ocean colors",
   "Add pricing and an FAQ, keep everything else",
@@ -29,7 +30,7 @@ export function StudioApp({
     {
       role: "assistant",
       content:
-        "This site is private — only you can see it. Tell me what it should be, and I will save it immediately.",
+        "Ask me anything, or tell me what this private site should be. Questions get answers. Build requests update the page.",
     },
   ]);
   const [busy, setBusy] = useState(false);
@@ -67,13 +68,14 @@ export function StudioApp({
         site?: Site;
         engine?: string;
         warning?: string;
+        changed?: boolean;
       };
       if (!response.ok) {
         setTurns((current) => [...current, { role: "assistant", content: data.error || "That did not work." }]);
         return;
       }
-      if (data.site) setSite(data.site);
-      const suffix = data.engine === "local" && !savedKey ? " (built-in designer — add a key in Settings for a full language model.)" : "";
+      if (data.site && data.changed !== false) setSite(data.site);
+      const suffix = data.engine === "local" && data.changed && !savedKey ? " (built-in designer — add a key in Settings for a full language model.)" : "";
       const warning = data.warning ? ` ${data.warning}` : "";
       setTurns((current) => [
         ...current,
@@ -125,7 +127,7 @@ export function StudioApp({
         <header className="flex items-center justify-between px-5 py-4">
           <div>
             <p className="text-[11px] font-semibold tracking-[0.28em] text-[#d4a574] uppercase">Owner studio</p>
-            <p className="mt-1 text-sm text-[#b9a89a]">Your private site updates as you send</p>
+            <p className="mt-1 text-sm text-[#b9a89a]">Ask questions or rebuild the site</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -186,7 +188,7 @@ export function StudioApp({
               </p>
             </div>
           ))}
-          {busy ? <p className="text-xs tracking-wide text-[#d4a574] uppercase">Saving to your private site…</p> : null}
+          {busy ? <p className="text-xs tracking-wide text-[#d4a574] uppercase">Working…</p> : null}
         </div>
 
         <div className="flex flex-wrap gap-2 px-5 pb-3">
@@ -216,7 +218,7 @@ export function StudioApp({
               }
             }}
             rows={3}
-            placeholder="Make it a restaurant named Supper House, rose palette, add reservations…"
+            placeholder="Ask a question, or make it a restaurant named Supper House…"
             className="w-full resize-none bg-transparent text-sm outline-none placeholder:text-[#5c564e]"
           />
           <div className="mt-3 flex items-center justify-between">
@@ -229,7 +231,7 @@ export function StudioApp({
               disabled={busy || !input.trim()}
               className="bg-[#d4a574] px-4 py-2 text-xs font-semibold text-[#1a140f] disabled:opacity-50"
             >
-              Publish
+              Send
             </button>
           </div>
         </form>

@@ -42,6 +42,23 @@ describe("local designer", () => {
     expect(reply.toLowerCase()).toMatch(/bakery|coffee|restaurant/);
   });
 
+  it("answers questions without rewriting the site", () => {
+    const base = defaultSite();
+    const { site, reply, changed } = applyLocalDesign(base, "How does the URL scanner work?");
+    expect(changed).toBe(false);
+    expect(site.identity.tagline).toBe(base.identity.tagline);
+    expect(reply.toLowerCase()).toMatch(/yes|safe|url/);
+    const hero = site.pages[0]?.sections.find((section) => section.type === "hero");
+    expect(hero && hero.type === "hero" ? hero.subheading : "").not.toMatch(/URL scanner work/i);
+  });
+
+  it("does not treat a greeting as a homepage brief", () => {
+    const base = defaultSite();
+    const { site, changed } = applyLocalDesign(base, "hello");
+    expect(changed).toBe(false);
+    expect(site.identity.tagline).toBe(base.identity.tagline);
+  });
+
   it("every built-in template is valid site JSON", () => {
     const base = defaultSite();
     for (const build of Object.values(templates)) {

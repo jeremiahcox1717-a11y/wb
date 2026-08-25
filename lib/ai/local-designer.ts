@@ -1,6 +1,7 @@
 import { palettes } from "../default-site";
 import type { Site, SiteSection } from "../schema";
 import { parseSite } from "../schema";
+import { answerLocally } from "./answer";
 import { templateMatchers, templates } from "./templates";
 
 const PALETTE_WORDS: { key: keyof typeof palettes; re: RegExp }[] = [
@@ -44,10 +45,39 @@ function applyName(site: Site, name: string) {
   if (footer && footer.type === "footer") footer.note = name;
 }
 
-export function applyLocalDesign(site: Site, message: string): { site: Site; reply: string } {
+export function wantsSiteChange(text: string) {
+  const t = text.trim();
+  if (!t) return false;
+
+  const explicitBuild =
+    /\b(build|rebuild|redesign|turn (?:this|it) into|make (?:this|it|me|a |the site)|create (?:a |the )?(?:web ?site|site|page)|add (?:an? )?(?:faq|pricing|testimonial|section)|rename|call(?:ed)? it|(?:use|switch to) a .+ palette)\b/i.test(
+      t,
+    );
+  const identity =
+    /\b(my name is|i(?:'| a)?m [A-Z]|site name|heading should|tagline should|brand(?:ed)? as)\b/.test(t) ||
+    /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(t) ||
+    /\b(?:phone|call|text)\b[^\d]{0,12}\+?[\d]/.test(t) ||
+    /\b(?:based in|located in|address is)\b/i.test(t);
+
+  const asking =
+    /\?/.test(t) ||
+    /^(who|what|when|where|why|how|which|can you tell|explain|do you|does|is this|are you|tell me)\b/i.test(t);
+
+  if (asking && !explicitBuild && !identity) return false;
+  if (explicitBuild || identity) return true;
+
+  if (templateMatchers.some((item) => item.re.test(t)) && t.split(/\s+/).length <= 6) return true;
+  return false;
+}
+
+export function applyLocalDesign(site: Site, message: string): { site: Site; reply: string; changed: boolean } {
   const text = message.trim();
   if (!text) {
-    return { site, reply: "Tell me what to change and I will update your private site immediately." };
+    return { site, reply: "Ask a question, or tell me what to change on your private site.", changed: false };
+  }
+
+  if (!wantsSiteChange(text)) {
+    return { site, reply: answerLocally(site, text), changed: false };
   }
 
   let next = clone(site);
@@ -168,25 +198,24 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
 
   if (notes.length === 0) {
     if (/\b(?:build|make|create|design)\b.+\b(?:web ?site|site|page|homepage)\b/i.test(text)) {
-      notes.push(
-        "I can build it. Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio, or design studio — and I will rebuild this page for you.",
-      );
-    } else {
-      const current = hero(next);
-      if (current && current.type === "hero") {
-        current.subheading = text.slice(0, 400);
-        next.identity.tagline = text.slice(0, 200);
-        notes.push("I treated that as a homepage brief and updated the live subheading.");
-      } else {
-        notes.push("I heard you, but I need a more specific change — a business type, a color, a name, or a section to add.");
-      }
+      return {
+        site,
+        reply:
+          "I can build it. Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio, or design studio — and I will rebuild this page for you.",
+        changed: false,
+      };
     }
-    notes.push("Paste an AI key in studio settings if you want deeper rewrites from a language model.");
+    return {
+      site,
+      reply: answerLocally(site, text),
+      changed: false,
+    };
   }
 
   next.updatedAt = new Date().toISOString();
   return {
     site: parseSite(next),
     reply: `${notes.join(" ")} It is live on your private site now.`,
+    changed: true,
   };
 }
