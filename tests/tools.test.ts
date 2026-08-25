@@ -49,6 +49,9 @@ describe("currency parser", () => {
     expect(resolveCurrency("pounds")).toBe("GBP");
     expect(resolveCurrency("yen")).toBe("JPY");
     expect(resolveCurrency("Canadian Dollar")).toBe("CAD");
+    expect(resolveCurrency("Canada")).toBe("CAD");
+    expect(resolveCurrency("Japan")).toBe("JPY");
+    expect(resolveCurrency("United States")).toBe("USD");
   });
 });
 

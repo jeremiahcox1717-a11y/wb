@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import {
   CURRENCY_CODES,
   CURRENCY_NAMES,
+  CURRENCY_TYPE_OPTIONS,
   formatMoney,
   readCurrencyInput,
   type CurrencyCode,
@@ -22,18 +23,61 @@ type Conversion = {
 };
 
 const fieldStyle = {
-  background: "var(--wb-bg)",
-  border: "1px solid var(--wb-border)",
-  color: "var(--wb-text)",
+  background: "#111111",
+  border: "2px solid #f2f2f0",
+  color: "#f3f3f1",
   borderRadius: "var(--wb-radius-btn)",
 } as const;
+
+function TypeBox({
+  id,
+  label,
+  listId,
+  value,
+  placeholder,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  listId: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="block min-w-0 flex-1 text-xs font-semibold tracking-[0.12em] uppercase" style={{ color: "var(--wb-text)" }}>
+      {label}
+      <input
+        id={id}
+        type="text"
+        inputMode="text"
+        value={value}
+        list={listId}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        className="relative z-10 mt-1 h-12 w-full min-w-[10rem] px-3 text-base outline-none"
+        style={fieldStyle}
+      />
+      <datalist id={listId}>
+        {CURRENCY_TYPE_OPTIONS.map((item) => (
+          <option key={`${listId}-${item.value}`} value={item.value}>
+            {item.code}
+          </option>
+        ))}
+      </datalist>
+    </label>
+  );
+}
 
 export function CurrencyCalculator({ heading, body }: { heading?: string; body?: string }) {
   const [amount, setAmount] = useState("100");
   const [from, setFrom] = useState<CurrencyCode>("CAD");
   const [to, setTo] = useState<CurrencyCode>("EUR");
-  const [fromTyped, setFromTyped] = useState("CAD");
-  const [toTyped, setToTyped] = useState("EUR");
+  const [fromTyped, setFromTyped] = useState("");
+  const [toTyped, setToTyped] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<Conversion | null>(null);
@@ -55,16 +99,6 @@ export function CurrencyCalculator({ heading, body }: { heading?: string; body?:
     setToTyped(value);
     const matched = readCurrencyInput(value);
     if (matched) setTo(matched);
-  }
-
-  function applyPicked(side: "from" | "to", value: CurrencyCode) {
-    if (side === "from") {
-      setFrom(value);
-      setFromTyped(value);
-      return;
-    }
-    setTo(value);
-    setToTyped(value);
   }
 
   async function convert(nextFrom = from, nextTo = to, nextAmount = amount) {
@@ -100,25 +134,23 @@ export function CurrencyCalculator({ heading, body }: { heading?: string; body?:
     const nextFrom = readCurrencyInput(fromTyped, from);
     const nextTo = readCurrencyInput(toTyped, to);
     if (!nextFrom) {
-      setError("Type a from currency like CAD, euros, or pounds.");
+      setError("Type a from country or currency, like Canada or CAD.");
       return;
     }
     if (!nextTo) {
-      setError("Type a to currency like USD, yen, or pounds.");
+      setError("Type a to country or currency, like Japan or euros.");
       return;
     }
     setFrom(nextFrom);
     setTo(nextTo);
-    setFromTyped(nextFrom);
-    setToTyped(nextTo);
     await convert(nextFrom, nextTo);
   }
 
   function swap() {
     const nextFrom = readCurrencyInput(toTyped, to) ?? to;
     const nextTo = readCurrencyInput(fromTyped, from) ?? from;
-    const nextFromTyped = toTyped.trim() ? toTyped : nextFrom;
-    const nextToTyped = fromTyped.trim() ? fromTyped : nextTo;
+    const nextFromTyped = toTyped;
+    const nextToTyped = fromTyped;
     setFrom(nextFrom);
     setTo(nextTo);
     setFromTyped(nextFromTyped);
@@ -142,131 +174,65 @@ export function CurrencyCalculator({ heading, body }: { heading?: string; body?:
         </h3>
       ) : null}
       <p className="mt-1 text-sm leading-5" style={{ color: "var(--wb-muted)" }}>
-        {body || "Type a currency on both sides, or pick from the lists. Convert either way."}
+        {body || "Type a country or currency on both sides. Canada to Japan, CAD to EUR — either works."}
       </p>
 
       <form onSubmit={onSubmit} className="mt-4 space-y-3">
-        <label className="block text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--wb-muted)" }}>
+        <label className="block text-xs font-semibold tracking-[0.12em] uppercase" style={{ color: "var(--wb-text)" }}>
           Amount
           <input
             id="currency-amount"
+            type="text"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
             inputMode="decimal"
             placeholder="100"
-            className="mt-1 w-full px-3 py-2 text-sm outline-none"
+            className="relative z-10 mt-1 h-12 w-full px-3 text-base outline-none"
             style={fieldStyle}
           />
         </label>
 
-        <div id="currency-type-both" className="space-y-1.5">
-          <p className="text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--wb-muted)" }}>
-            Type both currencies
-          </p>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <label className="sr-only" htmlFor="currency-from-type">
-              Type from currency
-            </label>
-            <input
-              id="currency-from-type"
-              value={fromTyped}
-              list="currency-from-list"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="From: CAD, euros…"
-              onChange={(event) => applyTyped("from", event.target.value)}
-              className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
-              style={fieldStyle}
-            />
-            <datalist id="currency-from-list">
-              {CURRENCY_CODES.map((item) => (
-                <option key={item} value={item}>
-                  {CURRENCY_NAMES[item]}
-                </option>
-              ))}
-            </datalist>
-            <button
-              id="currency-swap"
-              type="button"
-              onClick={swap}
-              className="h-10 shrink-0 px-3 text-xs font-semibold"
-              style={{
-                border: "1px solid var(--wb-border)",
-                borderRadius: "var(--wb-radius-btn)",
-                color: "var(--wb-text)",
-              }}
-            >
-              Swap
-            </button>
-            <label className="sr-only" htmlFor="currency-to-type">
-              Type to currency
-            </label>
-            <input
-              id="currency-to-type"
-              value={toTyped}
-              list="currency-to-list"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="To: EUR, pounds…"
-              onChange={(event) => applyTyped("to", event.target.value)}
-              className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
-              style={fieldStyle}
-            />
-            <datalist id="currency-to-list">
-              {CURRENCY_CODES.map((item) => (
-                <option key={item} value={item}>
-                  {CURRENCY_NAMES[item]}
-                </option>
-              ))}
-            </datalist>
-          </div>
+        <div id="currency-type-both" className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <TypeBox
+            id="currency-from-type"
+            listId="currency-from-list"
+            label="From country or currency"
+            value={fromTyped}
+            placeholder="Canada, CAD, euros…"
+            onChange={(value) => applyTyped("from", value)}
+          />
+          <button
+            id="currency-swap"
+            type="button"
+            onClick={swap}
+            className="h-12 shrink-0 px-4 text-xs font-semibold"
+            style={{
+              border: "2px solid #f2f2f0",
+              borderRadius: "var(--wb-radius-btn)",
+              color: "var(--wb-text)",
+            }}
+          >
+            Swap
+          </button>
+          <TypeBox
+            id="currency-to-type"
+            listId="currency-to-list"
+            label="To country or currency"
+            value={toTyped}
+            placeholder="Japan, yen, USD…"
+            onChange={(value) => applyTyped("to", value)}
+          />
         </div>
 
-        <div className="space-y-1.5">
-          <p className="text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--wb-muted)" }}>
-            Or choose
-          </p>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <label className="sr-only" htmlFor="currency-from">
-              Choose from currency
-            </label>
-            <select
-              id="currency-from"
-              value={from}
-              onChange={(event) => applyPicked("from", event.target.value as CurrencyCode)}
-              className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
-              style={fieldStyle}
-            >
-              {CURRENCY_CODES.map((item) => (
-                <option key={item} value={item}>
-                  {item} — {CURRENCY_NAMES[item]}
-                </option>
-              ))}
-            </select>
-            <label className="sr-only" htmlFor="currency-to">
-              Choose to currency
-            </label>
-            <select
-              id="currency-to"
-              value={to}
-              onChange={(event) => applyPicked("to", event.target.value as CurrencyCode)}
-              className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
-              style={fieldStyle}
-            >
-              {CURRENCY_CODES.map((item) => (
-                <option key={item} value={item}>
-                  {item} — {CURRENCY_NAMES[item]}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <p className="text-xs" style={{ color: "var(--wb-muted)" }}>
+          Using {from} → {to}. Type a country name or a currency code in the boxes above.
+        </p>
 
         <button
           id="currency-convert"
           type="submit"
           disabled={busy || !amount.trim()}
-          className="h-10 w-full px-4 text-sm font-semibold disabled:opacity-50"
+          className="h-12 w-full px-4 text-sm font-semibold disabled:opacity-50"
           style={{
             background: "var(--wb-accent)",
             color: "var(--wb-accent-text)",

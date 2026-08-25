@@ -144,6 +144,58 @@ const ALIASES: Record<string, CurrencyCode> = {
   ron: "RON",
   leu: "RON",
   isk: "ISK",
+  canada: "CAD",
+  usa: "USD",
+  us: "USD",
+  america: "USD",
+  "united states": "USD",
+  "united states of america": "USD",
+  uk: "GBP",
+  "united kingdom": "GBP",
+  britain: "GBP",
+  england: "GBP",
+  scotland: "GBP",
+  wales: "GBP",
+  japan: "JPY",
+  australia: "AUD",
+  "new zealand": "NZD",
+  china: "CNY",
+  india: "INR",
+  mexico: "MXN",
+  brazil: "BRL",
+  switzerland: "CHF",
+  "hong kong": "HKD",
+  singapore: "SGD",
+  thailand: "THB",
+  "south africa": "ZAR",
+  sweden: "SEK",
+  norway: "NOK",
+  denmark: "DKK",
+  turkey: "TRY",
+  poland: "PLN",
+  israel: "ILS",
+  philippines: "PHP",
+  malaysia: "MYR",
+  indonesia: "IDR",
+  hungary: "HUF",
+  "czech republic": "CZK",
+  czechia: "CZK",
+  romania: "RON",
+  iceland: "ISK",
+  "south korea": "KRW",
+  korea: "KRW",
+  france: "EUR",
+  germany: "EUR",
+  italy: "EUR",
+  spain: "EUR",
+  netherlands: "EUR",
+  ireland: "EUR",
+  portugal: "EUR",
+  belgium: "EUR",
+  austria: "EUR",
+  greece: "EUR",
+  europe: "EUR",
+  eurozone: "EUR",
 };
 
 const NAME_PATTERN =
@@ -154,6 +206,23 @@ export type MoneyQuery = {
   from: CurrencyCode;
   to?: CurrencyCode;
 };
+
+export const CURRENCY_TYPE_OPTIONS: { value: string; code: CurrencyCode }[] = CURRENCY_CODES.flatMap((code) => {
+  const extras: Partial<Record<CurrencyCode, string[]>> = {
+    CAD: ["Canada"],
+    USD: ["United States"],
+    GBP: ["United Kingdom"],
+    JPY: ["Japan"],
+    EUR: ["Europe"],
+    AUD: ["Australia"],
+    CNY: ["China"],
+    INR: ["India"],
+    MXN: ["Mexico"],
+    BRL: ["Brazil"],
+  };
+  const values = [code, CURRENCY_NAMES[code], ...(extras[code] ?? [])];
+  return values.map((value) => ({ value, code }));
+});
 
 export function isCurrencyCode(value: string): value is CurrencyCode {
   return (CURRENCY_CODES as readonly string[]).includes(value);

@@ -25,7 +25,7 @@ export const currencyCalculatorSection: SiteSection = {
   id: "currency",
   type: "currencyCalculator",
   heading: "Currency calculator",
-  body: "Type a currency on both sides, or pick from the lists. Convert either way and see every live rate.",
+  body: "Type a country or currency on both sides, like Canada to Japan. Convert either way and see every live rate.",
 };
 
 export const notebookSection: SiteSection = {
