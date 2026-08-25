@@ -60,9 +60,9 @@ function Button({ href, children, tone }: { href: string; children: React.ReactN
   );
 }
 
-function SectionFrame({ id, children }: { id?: string; children: React.ReactNode }) {
+function SectionFrame({ id, children, compact }: { id?: string; children: React.ReactNode; compact?: boolean }) {
   return (
-    <section id={id} className="mx-auto w-full max-w-6xl px-6 py-20 md:px-10">
+    <section id={id} className={`mx-auto w-full px-6 md:px-10 ${compact ? "max-w-7xl py-8" : "max-w-6xl py-20"}`}>
       {children}
     </section>
   );
@@ -435,7 +435,7 @@ function renderSection(section: SiteSection, site: Site) {
       );
     case "urlScanner":
       return (
-        <SectionFrame key={section.id ?? "urlScanner"} id={section.id}>
+        <SectionFrame key={section.id ?? "urlScanner"} id={section.id} compact>
           <UrlScannerSection heading={section.heading} body={section.body} />
         </SectionFrame>
       );

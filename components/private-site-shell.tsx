@@ -22,7 +22,7 @@ export function PrivateSiteShell({ initialSite, pageSlug }: { initialSite: Site;
     <div className="flex min-h-screen flex-col bg-[#111114]">
       <OwnerBar />
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <div className="min-h-[54vh] min-w-0 flex-1 overflow-auto">
+        <div className="min-h-[70vh] min-w-0 flex-1 overflow-auto">
           <SiteView site={site} page={page} />
         </div>
         <OwnerTools onSite={setSite} />

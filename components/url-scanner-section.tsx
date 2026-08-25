@@ -35,7 +35,7 @@ export function UrlScannerSection({ heading, body }: { heading?: string; body?: 
 
   return (
     <div
-      className="p-6 md:p-8"
+      className="p-4 md:p-5"
       style={{
         background: "var(--wb-surface)",
         border: "1px solid var(--wb-border)",
@@ -43,14 +43,14 @@ export function UrlScannerSection({ heading, body }: { heading?: string; body?: 
       }}
     >
       {heading ? (
-        <h3 className="text-2xl" style={{ fontFamily: "var(--wb-display)" }}>
+        <h3 className="text-xl" style={{ fontFamily: "var(--wb-display)" }}>
           {heading}
         </h3>
       ) : null}
-      <p className="mt-2 text-sm leading-6" style={{ color: "var(--wb-muted)" }}>
+      <p className="mt-1 text-sm leading-5" style={{ color: "var(--wb-muted)" }}>
         {body || "Paste a link. YES means it looks safe to open. NO means do not open it."}
       </p>
-      <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <form onSubmit={onSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
         <label className="sr-only" htmlFor="page-url-scan">
           URL to scan
         </label>
@@ -59,7 +59,7 @@ export function UrlScannerSection({ heading, body }: { heading?: string; body?: 
           value={url}
           onChange={(event) => setUrl(event.target.value)}
           placeholder="https://example.com"
-          className="min-w-0 flex-1 px-3 py-3 text-base outline-none"
+          className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
           style={{
             background: "var(--wb-bg)",
             border: "1px solid var(--wb-border)",
@@ -71,7 +71,7 @@ export function UrlScannerSection({ heading, body }: { heading?: string; body?: 
           id="page-url-scan-submit"
           type="submit"
           disabled={busy || !url.trim()}
-          className="px-5 py-3 text-sm font-semibold disabled:opacity-50"
+          className="px-4 py-2 text-sm font-semibold disabled:opacity-50"
           style={{
             background: "var(--wb-accent)",
             color: "var(--wb-accent-text)",
@@ -81,18 +81,18 @@ export function UrlScannerSection({ heading, body }: { heading?: string; body?: 
           {busy ? "Scanning…" : "Scan URL"}
         </button>
       </form>
-      {error ? <p className="mt-4 text-sm">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm">{error}</p> : null}
       {result ? (
-        <div className="mt-5">
-          <p className="font-serif text-5xl" style={{ color: result.answer === "yes" ? "#7dffb3" : "#e8a0a0" }}>
+        <div className="mt-3">
+          <p className="font-serif text-3xl leading-none" style={{ color: result.answer === "yes" ? "#7dffb3" : "#e8a0a0" }}>
             {result.answer === "yes" ? "YES" : "NO"}
           </p>
           {result.url ? (
-            <p className="mt-2 break-all text-xs" style={{ color: "var(--wb-muted)" }}>
+            <p className="mt-1 break-all text-xs" style={{ color: "var(--wb-muted)" }}>
               {result.url}
             </p>
           ) : null}
-          <ul className="mt-3 list-disc space-y-1 pl-4 text-sm">
+          <ul className="mt-2 list-disc space-y-0.5 pl-4 text-sm">
             {result.reasons.map((reason) => (
               <li key={reason}>{reason}</li>
             ))}
