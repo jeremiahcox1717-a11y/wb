@@ -90,7 +90,12 @@ export function looksLikeUrlMake(text: string) {
   const t = text.trim();
   if (!t) return false;
   if (/\bscan(?:ner)?\b/i.test(t) && /\b(url|link)\b/i.test(t)) return false;
-  if (/\b(make|create|build|give me|get me|find me|register|buy)\b.{0,48}\b(url|domain|\.com)\b/i.test(t)) return true;
+  const customizingThePage =
+    /\b(web ?site|homepage|heading|palette|colou?r|section|bakery|portfolio|restaurant|coffee|hero|tagline|background|font)\b/i.test(
+      t,
+    ) && !/\b(domain|registrar|godaddy|url for|make (?:me )?a url|need (?:an? )?(?:official |public )?url)\b/i.test(t);
+  if (customizingThePage) return false;
+  if (/\b(make|create|build|give me|get me|find me|register|buy)\b.{0,48}\b(url|domain)\b/i.test(t)) return true;
   if (/\bneed (?:a |an |me a )?(?:public |official |real )?(?:url|domain)\b/i.test(t)) return true;
   if (/\bat\s+\.com\b/i.test(t)) return true;
   if (/\burl for\b/i.test(t)) return true;

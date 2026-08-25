@@ -31,7 +31,7 @@ export function StudioApp({
     {
       role: "assistant",
       content:
-        "Ask me anything, or tell me what this private site should be. Questions get answers. Build requests update the page.",
+        "Ask me anything, or tell me what this private site should be. Questions get answers. Any customization you ask for is applied on the page.",
     },
   ]);
   const [busy, setBusy] = useState(false);

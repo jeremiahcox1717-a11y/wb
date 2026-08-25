@@ -407,6 +407,78 @@ export const templates = {
 
 export type TemplateName = keyof typeof templates;
 
+function titleCase(value: string) {
+  return value
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function genericBusiness(previous: Site, kind: string): Site {
+  const label = kind.trim().replace(/\s+/g, " ").slice(0, 60) || "studio";
+  const titled = titleCase(label);
+  const name = previous.identity.siteName.includes("Bennett") ? titled : previous.identity.siteName;
+  return stamp({
+    identity: {
+      ...keepIdentity(previous, name),
+      siteName: name,
+      tagline: `${titled} — built to match what you asked.`,
+    },
+    seo: {
+      title: `${name} · ${titled}`,
+      description: `${name} is a ${label}. The page follows what you asked the builder.`,
+    },
+    theme: previous.theme,
+    nav: [
+      { label: "Home", href: "/" },
+      { label: "Work", href: "#work" },
+      { label: "Visit", href: "#contact" },
+    ],
+    pages: [
+      {
+        id: "home",
+        slug: "/",
+        title: "Home",
+        sections: [
+          {
+            type: "hero",
+            layout: "editorial",
+            kicker: titled,
+            heading: name,
+            subheading: `A ${label} page. Ask for another color, heading, or section and it updates live.`,
+            primaryCta: { label: "See the work", href: "#work" },
+            secondaryCta: { label: "Get in touch", href: "#contact" },
+          },
+          {
+            id: "work",
+            type: "features",
+            heading: `What this ${label} offers`,
+            items: [
+              { title: "The offer", body: `Say what this ${label} actually sells and this card will be rewritten.` },
+              { title: "How it feels", body: "Ask for luxury, quiet, loud, or a specific color and the theme follows." },
+              { title: "Next step", body: "Add pricing, an FAQ, a team, or a booking line whenever you want." },
+            ],
+          },
+          {
+            id: "about",
+            type: "richtext",
+            eyebrow: "About",
+            heading: name,
+            body: `${name} runs a ${label}. Replace this paragraph with your story, hours, and the thing you want people to do next.`,
+          },
+          {
+            id: "contact",
+            type: "contact",
+            heading: "Visit / enquire",
+            body: "Add an email, phone, or city and this block fills in.",
+          },
+          { type: "footer", note: name },
+        ],
+      },
+    ],
+  });
+}
+
 export const templateMatchers: { name: TemplateName; re: RegExp; label: string }[] = [
   { name: "bakery", re: /\b(baker(?:y)?|pastr(?:y|ies)|bread|croissant|cake shop)\b/i, label: "bakery" },
   { name: "coffee", re: /\b(coffee|caf[eé]|espresso|pour[- ]?over)\b/i, label: "coffee shop" },

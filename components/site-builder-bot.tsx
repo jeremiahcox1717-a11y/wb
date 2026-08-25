@@ -15,7 +15,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [turns, setTurns] = useState<Turn[]>([
     {
       role: "assistant",
-      content: "Ask me anything — what’s the time, a question, or what to build. I can also scan a URL or convert money.",
+      content: "Ask me anything — what’s the time, a question, or what to change on this site. I apply customizations on the live page.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -121,7 +121,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
         </span>
         <div>
           <p className="text-[10px] font-semibold tracking-[0.24em] text-[#f2f2f0] uppercase">Website builder</p>
-          <p className="text-xs text-[#a3a39b]">{busy ? "Working…" : "Ask a question or tell me what to build"}</p>
+          <p className="text-xs text-[#a3a39b]">{busy ? "Working…" : "Ask a question or tell me what to change"}</p>
         </div>
       </header>
 
@@ -182,7 +182,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             }
           }}
           rows={1}
-          placeholder="What’s the time? Or build me a bakery website…"
+          placeholder="Make the heading Hello. Or build me a bakery…"
           className="min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-[#5c564e]"
         />
         <button

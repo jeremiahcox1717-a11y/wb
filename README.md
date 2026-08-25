@@ -57,7 +57,7 @@ After you sign in, the **Website builder** chat sits on the site. Type things li
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-Ask a question and you get an answer — the page stays put. Tell it what to build and the site on the left (or above, on a phone) updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
+Ask a question and you get an answer — the page stays put. Tell it what to build or any customization (colors, heading, sections, a barbershop, a bakery) and the site updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
 
 Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios, and the bot still answers questions about this site. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model answers and rewrites. That key is stored in `data/settings.json`, which is gitignored.
 

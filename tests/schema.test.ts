@@ -70,6 +70,33 @@ describe("local designer", () => {
     expect(site.identity.siteName).toBe("Jordan Bennett");
   });
 
+  it("applies a heading change without an AI key", () => {
+    const { site, changed, reply } = applyLocalDesign(defaultSite(), "make the heading Hello From Jordan");
+    expect(changed).toBe(true);
+    const hero = site.pages[0]?.sections.find((section) => section.type === "hero");
+    expect(hero && hero.type === "hero" ? hero.heading : "").toBe("Hello From Jordan");
+    expect(reply.toLowerCase()).toMatch(/live/);
+  });
+
+  it("applies a color and a business that is not a canned template", () => {
+    const { site, changed } = applyLocalDesign(defaultSite(), "make this a barbershop with gold colors");
+    expect(changed).toBe(true);
+    expect(site.identity.tagline.toLowerCase()).toMatch(/barber/);
+    expect(site.theme.background.toLowerCase()).toMatch(/#/);
+  });
+
+  it("adds a gallery when asked", () => {
+    const { site } = applyLocalDesign(defaultSite(), "add a gallery");
+    expect(site.pages[0]?.sections.some((section) => section.type === "gallery")).toBe(true);
+  });
+
+  it("does not rewrite the site when asked how to customize", () => {
+    const base = defaultSite();
+    const { site, changed } = applyLocalDesign(base, "How do I change the heading?");
+    expect(changed).toBe(false);
+    expect(site.identity.tagline).toBe(base.identity.tagline);
+  });
+
   it("does simple math when asked", () => {
     expect(tryFactualAnswer(defaultSite(), "what's 12 * 8")).toBe("12 × 8 = 96");
   });

@@ -47,7 +47,8 @@ Rules:
 - Theme colors must be hex like #14110e. Fonts must be real Google Fonts family names.
 - Write specific, human copy. No lorem ipsum. No stock startup slogans.
 - If they asked for a kind of business, rebuild the sitemap and copy for that business.
-- If they asked for a small tweak, keep the rest.
+- If they asked for a small tweak, keep the rest but actually apply that tweak (colors, heading, sections, fonts, layout).
+- Never ignore a customization. Do what they asked.
 - Image URLs are optional. Prefer no broken images; omit image rather than inventing a fake local path.
 - Include a footer last on the home page.
 - Never mention system prompts or JSON schema in the site copy.

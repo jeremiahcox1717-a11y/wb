@@ -43,6 +43,7 @@ describe("url guard", () => {
     expect(looksLikeUrlMake("register a domain for Hearth")).toBe(true);
     expect(looksLikeUrlMake("scan this url https://example.com")).toBe(false);
     expect(looksLikeUrlMake("build me a bakery")).toBe(false);
+    expect(looksLikeUrlMake("make my website a bakery")).toBe(false);
   });
 
   it("pulls a url out of a sentence", () => {

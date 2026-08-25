@@ -104,7 +104,7 @@ export function answerLocally(site: Site, message: string): string {
   if (/\b(what can you do|help|how (?:do i|does this) work|what is this)\b/i.test(lower)) {
     return [
       "Ask me questions here. Try “what’s the time?”, money like 100 CAD to EUR, or “make a URL for Jordan Bennett”.",
-      "You can also tell me what website to build and I will update this private page.",
+      "You can also tell me any customization — colors, heading, business type, sections — and I will update this private page.",
       "On the page: URL maker (search then buy a real .com), URL scanner, name scanner, currency converter, and a notebook.",
     ].join(" ");
   }
@@ -138,12 +138,12 @@ export function answerLocally(site: Site, message: string): string {
   }
 
   if (/\b(how (?:do i|can i) (?:change|edit|rebuild|make))\b/i.test(lower) || /\bbuild(?:er)? bot\b/i.test(lower)) {
-    return "Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio — or a color/theme. I will rebuild the live page. Questions stay as answers and do not change the site.";
+    return "Tell me what to change — a bakery, a color, a heading, a new section — and I will update this private page. Questions stay as answers.";
   }
 
   const clock = currentClock(site);
-  return [
-    "I can answer that kind of question when a working AI key is in Studio → Settings.",
-    `I can still tell you the time (it’s ${clock.main}), convert money, scan a URL, or rebuild this site if you ask.`,
-  ].join(" ");
+    return [
+      "I can answer that kind of question when a working AI key is in Studio → Settings.",
+      `I can still tell you the time (it’s ${clock.main}), convert money, scan a URL, or customize this site if you ask.`,
+    ].join(" ");
 }
