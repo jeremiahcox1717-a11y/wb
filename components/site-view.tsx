@@ -1,5 +1,9 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import { CurrencyCalculator } from "@/components/currency-calculator";
+import { NameScannerSection } from "@/components/name-scanner-section";
+import { NotebookSection } from "@/components/notebook-section";
+import { UrlScannerSection } from "@/components/url-scanner-section";
 import type { Site, SitePage, SiteSection } from "@/lib/schema";
 import { radiusValue } from "@/lib/schema";
 
@@ -427,6 +431,30 @@ function renderSection(section: SiteSection, site: Site) {
               </article>
             ))}
           </div>
+        </SectionFrame>
+      );
+    case "urlScanner":
+      return (
+        <SectionFrame key={section.id ?? "urlScanner"} id={section.id}>
+          <UrlScannerSection heading={section.heading} body={section.body} />
+        </SectionFrame>
+      );
+    case "nameScanner":
+      return (
+        <SectionFrame key={section.id ?? "nameScanner"} id={section.id}>
+          <NameScannerSection heading={section.heading} body={section.body} />
+        </SectionFrame>
+      );
+    case "currencyCalculator":
+      return (
+        <SectionFrame key={section.id ?? "currencyCalculator"} id={section.id}>
+          <CurrencyCalculator heading={section.heading} body={section.body} />
+        </SectionFrame>
+      );
+    case "notebook":
+      return (
+        <SectionFrame key={section.id ?? "notebook"} id={section.id}>
+          <NotebookSection heading={section.heading} body={section.body} />
         </SectionFrame>
       );
     case "footer":

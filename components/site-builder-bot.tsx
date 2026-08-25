@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { looksLikeMoney, parseMoney } from "@/lib/currency";
 import type { Site } from "@/lib/schema";
 import { extractUrl, formatAnswer, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
 
@@ -20,7 +21,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
     {
       role: "assistant",
       content:
-        "Hi — I am your website builder. Tell me what to build, or paste a URL someone sent you and I will answer YES or NO.",
+        "Hi — I am your website builder. I can rebuild this site, scan a URL, or convert money like 100 CAD into euros and pounds.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -37,6 +38,21 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
     const history = [...turns, { role: "user" as const, content: trimmed }];
     setTurns(history);
     try {
+      if (looksLikeMoney(trimmed) && parseMoney(trimmed)) {
+        const response = await fetch("/api/currency/convert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: trimmed }),
+        });
+        const data = (await response.json()) as { error?: string; summary?: string };
+        if (!response.ok) {
+          setTurns((current) => [...current, { role: "assistant", content: data.error || "I could not convert that." }]);
+          return;
+        }
+        setTurns((current) => [...current, { role: "assistant", content: data.summary || "Converted." }]);
+        return;
+      }
+
       if (looksLikeUrlQuestion(trimmed) && extractUrl(trimmed)) {
         const response = await fetch("/api/urls/scan", {
           method: "POST",

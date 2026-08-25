@@ -36,7 +36,12 @@ npm run dev
 - Your site: [http://localhost:3000](http://localhost:3000)
 - Studio: [http://localhost:3000/studio](http://localhost:3000/studio)
 
-On the site, open the **URL check** tab to make a clean link or scan a link someone sent you. The answer is **YES** or **NO**.
+On the homepage you also get:
+
+- **URL scanner** — paste a link, get YES or NO
+- **Name scanner** — check if someone else already uses a name
+- **Currency calculator** — type `100 CAD` to see euros and pounds
+- **Notebook** — save a person’s name, business, phone number, and email
 
 `npm test`, `npm run lint`, and `npm run build` are the checks.
 
@@ -49,7 +54,7 @@ After you sign in, the **Website builder** chat sits on the site. Type things li
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-The site on the left (or above, on a phone) updates as soon as the bot replies. Paste a URL into the chat (or the **URL check** tab) and it answers YES or NO.
+The site on the left (or above, on a phone) updates as soon as the bot replies. You can also type `100 CAD` in the chat or the currency section to see euros and pounds.
 
 Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model rewrites. That key is stored in `data/settings.json`, which is gitignored.
 

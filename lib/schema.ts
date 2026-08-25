@@ -175,6 +175,34 @@ const footerSectionSchema = z.object({
   note: z.string().max(200).optional(),
 });
 
+const urlScannerSectionSchema = z.object({
+  id: z.string().max(80).optional(),
+  type: z.literal("urlScanner"),
+  heading: z.string().max(160).optional(),
+  body: z.string().max(400).optional(),
+});
+
+const nameScannerSectionSchema = z.object({
+  id: z.string().max(80).optional(),
+  type: z.literal("nameScanner"),
+  heading: z.string().max(160).optional(),
+  body: z.string().max(400).optional(),
+});
+
+const currencyCalculatorSectionSchema = z.object({
+  id: z.string().max(80).optional(),
+  type: z.literal("currencyCalculator"),
+  heading: z.string().max(160).optional(),
+  body: z.string().max(400).optional(),
+});
+
+const notebookSectionSchema = z.object({
+  id: z.string().max(80).optional(),
+  type: z.literal("notebook"),
+  heading: z.string().max(160).optional(),
+  body: z.string().max(400).optional(),
+});
+
 export const sectionSchema = z.discriminatedUnion("type", [
   heroSectionSchema,
   featuresSectionSchema,
@@ -187,6 +215,10 @@ export const sectionSchema = z.discriminatedUnion("type", [
   ctaSectionSchema,
   contactSectionSchema,
   teamSectionSchema,
+  urlScannerSectionSchema,
+  nameScannerSectionSchema,
+  currencyCalculatorSectionSchema,
+  notebookSectionSchema,
   footerSectionSchema,
 ]);
 

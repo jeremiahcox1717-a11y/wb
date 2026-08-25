@@ -1,4 +1,5 @@
 import type { Site, SiteTheme } from "./schema";
+import { ensureScannerSections } from "./scanner-sections";
 
 export const palettes: Record<string, Partial<SiteTheme> & { label: string }> = {
   copper: {
@@ -96,7 +97,7 @@ export const palettes: Record<string, Partial<SiteTheme> & { label: string }> = 
 
 export function defaultSite(): Site {
   const theme = palettes.copper;
-  return {
+  return ensureScannerSections({
     version: 1,
     updatedAt: new Date().toISOString(),
     identity: {
@@ -194,5 +195,5 @@ export function defaultSite(): Site {
         ],
       },
     ],
-  };
+  });
 }

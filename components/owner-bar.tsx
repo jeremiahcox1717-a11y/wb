@@ -11,7 +11,7 @@ export function OwnerBar() {
 
   return (
     <div className="flex items-center justify-between gap-3 bg-[#111114] px-4 py-2 text-xs text-[#b9a89a]">
-      <p>Private — only you can open this site. Builder and URL check are on this page.</p>
+      <p>Private — only you can open this site. Scanners, currency, and the notebook are on the page.</p>
       <div className="flex items-center gap-3">
         <Link href="/studio" className="underline">
           Studio

@@ -1,11 +1,14 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { defaultSite } from "./default-site";
+import { emptyNotebook, parseNotebook, type Notebook, type NotebookEntry } from "./notebook";
 import { parseSite, type Site } from "./schema";
+import { ensureScannerSections } from "./scanner-sections";
 
 const dataDir = path.join(process.cwd(), "data");
 const sitePath = path.join(dataDir, "site.json");
 const settingsPath = path.join(dataDir, "settings.json");
+const notebookPath = path.join(dataDir, "notebook.json");
 
 export type StudioSettings = {
   apiKey?: string;
@@ -22,7 +25,7 @@ export async function readSite(): Promise<Site> {
   await ensureDataDir();
   try {
     const raw = await fs.readFile(sitePath, "utf8");
-    return parseSite(JSON.parse(raw));
+    return ensureScannerSections(parseSite(JSON.parse(raw)));
   } catch {
     const site = defaultSite();
     await writeSite(site);
@@ -32,7 +35,9 @@ export async function readSite(): Promise<Site> {
 
 export async function writeSite(site: Site): Promise<Site> {
   await ensureDataDir();
-  const next = parseSite({ ...site, updatedAt: new Date().toISOString(), version: 1 });
+  const next = ensureScannerSections(
+    parseSite({ ...site, updatedAt: new Date().toISOString(), version: 1 }),
+  );
   await fs.writeFile(sitePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
   return next;
 }
@@ -75,4 +80,44 @@ export function publicSettings(settings: StudioSettings) {
       (process.env.ANTHROPIC_API_KEY ? "claude-sonnet-4-5" : "gpt-4.1-mini"),
     baseUrl: settings.baseUrl || process.env.OPENAI_BASE_URL || "",
   };
+}
+
+export async function readNotebook(): Promise<Notebook> {
+  await ensureDataDir();
+  try {
+    const raw = await fs.readFile(notebookPath, "utf8");
+    return parseNotebook(JSON.parse(raw));
+  } catch {
+    return emptyNotebook();
+  }
+}
+
+export async function writeNotebook(notebook: Notebook): Promise<Notebook> {
+  await ensureDataDir();
+  const next = parseNotebook({ version: 1, entries: notebook.entries });
+  await fs.writeFile(notebookPath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+  return next;
+}
+
+export async function addNotebookEntry(
+  entry: Omit<NotebookEntry, "id" | "createdAt"> & { id?: string; createdAt?: string },
+): Promise<Notebook> {
+  const notebook = await readNotebook();
+  notebook.entries.unshift({
+    id: entry.id || crypto.randomUUID(),
+    name: entry.name,
+    businessName: entry.businessName,
+    phone: entry.phone,
+    email: entry.email,
+    createdAt: entry.createdAt || new Date().toISOString(),
+  });
+  return writeNotebook(notebook);
+}
+
+export async function deleteNotebookEntry(id: string): Promise<Notebook> {
+  const notebook = await readNotebook();
+  return writeNotebook({
+    version: 1,
+    entries: notebook.entries.filter((item) => item.id !== id),
+  });
 }

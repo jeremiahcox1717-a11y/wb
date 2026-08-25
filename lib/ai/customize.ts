@@ -30,7 +30,8 @@ Rules:
 - Keep slugs starting with "/". The home page slug must be "/".
 - Preserve contact details (email, phone, location, socials) unless the owner asked to change them.
 - Preserve the ownerName unless they asked to rename themselves.
-- Use only these section types: hero, features, richtext, gallery, testimonials, pricing, faq, stats, cta, contact, team, footer.
+- Use only these section types: hero, features, richtext, gallery, testimonials, pricing, faq, stats, cta, contact, team, urlScanner, nameScanner, currencyCalculator, notebook, footer.
+- Always keep urlScanner, nameScanner, currencyCalculator, and notebook on the home page (before the footer).
 - Theme colors must be hex like #14110e. Fonts must be real Google Fonts family names.
 - Write specific, human copy. No lorem ipsum. No stock startup slogans.
 - If they asked for a kind of business, rebuild the sitemap and copy for that business.

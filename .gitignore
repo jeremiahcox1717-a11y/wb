@@ -41,6 +41,7 @@ next-env.d.ts
 
 # private studio secrets (never publish)
 /data/settings.json
+/data/notebook.json
 /data/admin-password.txt
 /data/*.secret.json
 /data/*.key
