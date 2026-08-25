@@ -1,5 +1,4 @@
 import type { Site } from "../schema";
-import { generateUrl, looksLikeUrlMake } from "../url-guard";
 
 const CLOCK_ZONES = [
   { id: "Europe/London", label: "London" },
@@ -83,12 +82,6 @@ export function tryFactualAnswer(site: Site, message: string, now = new Date()):
     }
   }
 
-  if (looksLikeUrlMake(text) || /\bmake\b.+\bat\s+\.com\b/i.test(text)) {
-    const made = generateUrl(text);
-    if (!made.ok) return made.error;
-    return `Here’s the URL: ${made.url}`;
-  }
-
   return null;
 }
 
@@ -110,14 +103,18 @@ export function answerLocally(site: Site, message: string): string {
 
   if (/\b(what can you do|help|how (?:do i|does this) work|what is this)\b/i.test(lower)) {
     return [
-      "Ask me questions here. Try “what’s the time?”, money like 100 CAD to EUR, or a URL to scan.",
+      "Ask me questions here. Try “what’s the time?”, money like 100 CAD to EUR, or “make a URL for Jordan Bennett”.",
       "You can also tell me what website to build and I will update this private page.",
-      "On the page: URL scanner, name scanner, currency converter, and a notebook.",
+      "On the page: URL maker (search then buy a real .com), URL scanner, name scanner, currency converter, and a notebook.",
     ].join(" ");
   }
 
   if (/\burl\b/i.test(lower) && /\bscan/i.test(lower)) {
-    return "Paste a link in the URL section or here. YES means it looks safe to open. NO means do not open it. You can also type a name to make a clean URL.";
+    return "Paste a link in the URL section or here. YES means it looks safe to open. NO means do not open it.";
+  }
+
+  if (/\b(url maker|make (?:a |me a )?url|public domain|godaddy|\.com)\b/i.test(lower)) {
+    return "Type a name in the URL maker. I search the public internet. If it is free, open Get on GoDaddy and buy it. After the registrar issues it, that address works on every phone, app, and browser. This site cannot charge a card or mint a live domain by itself.";
   }
 
   if (/\bname scan/i.test(lower) || /\bscan(?:ner)? a name\b/i.test(lower)) {

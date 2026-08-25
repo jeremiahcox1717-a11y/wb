@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractUrl, generateUrl, scanUrl } from "@/lib/url-guard";
+import { extractUrl, generateUrl, looksLikeUrlMake, scanUrl } from "@/lib/url-guard";
 
 describe("url guard", () => {
   it("says yes for a normal https address", () => {
@@ -35,6 +35,14 @@ describe("url guard", () => {
     const fromSentence = generateUrl("make a url for Hearth & Crumb at .com");
     expect(fromSentence.ok).toBe(true);
     if (fromSentence.ok) expect(fromSentence.url).toBe("https://hearthandcrumb.com");
+  });
+
+  it("detects domain-shop requests without treating a scan as a make", () => {
+    expect(looksLikeUrlMake("make a url for Jordan Bennett")).toBe(true);
+    expect(looksLikeUrlMake("I need an official url for Jordan")).toBe(true);
+    expect(looksLikeUrlMake("register a domain for Hearth")).toBe(true);
+    expect(looksLikeUrlMake("scan this url https://example.com")).toBe(false);
+    expect(looksLikeUrlMake("build me a bakery")).toBe(false);
   });
 
   it("pulls a url out of a sentence", () => {

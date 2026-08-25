@@ -1,34 +1,43 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { generateUrl } from "@/lib/url-guard";
+import { DomainHits } from "@/components/domain-hits";
+import type { DomainHit } from "@/lib/domain-shop";
+
+type SearchResponse = {
+  query?: string;
+  hits?: DomainHit[];
+  summary?: string;
+  error?: string;
+};
 
 export function UrlMakerSection({ heading, body }: { heading?: string; body?: string }) {
   const [name, setName] = useState("");
-  const [made, setMade] = useState("");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [hits, setHits] = useState<DomainHit[]>([]);
 
-  function onSubmit(event: FormEvent) {
+  async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    const generated = generateUrl(name);
-    if (!generated.ok) {
-      setError(generated.error);
-      setMade("");
-      return;
-    }
+    setBusy(true);
     setError("");
-    setMade(generated.url);
-    setCopied(false);
-  }
-
-  async function copy() {
-    if (!made) return;
     try {
-      await navigator.clipboard.writeText(made);
-      setCopied(true);
+      const response = await fetch("/api/domains/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const data = (await response.json()) as SearchResponse;
+      if (!response.ok) {
+        setHits([]);
+        setError(data.error || "Could not search that name.");
+        return;
+      }
+      setHits(data.hits ?? []);
     } catch {
-      setCopied(false);
+      setError("Network error. Try again.");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -48,11 +57,12 @@ export function UrlMakerSection({ heading, body }: { heading?: string; body?: st
         </h3>
       ) : null}
       <p className="mt-1 text-sm leading-5" style={{ color: "var(--wb-muted)" }}>
-        {body || "Type a name. I’ll turn it into a .com address, like jordanbennett.com."}
+        {body ||
+          "Type a name. I search the real public internet. If it’s free, buy it at GoDaddy (or Namecheap / Porkbun). After you register it, that .com works on every phone, app, and browser."}
       </p>
       <form onSubmit={onSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
         <label className="sr-only" htmlFor="page-url-make">
-          Name to turn into a .com URL
+          Name to search as a public domain
         </label>
         <input
           id="page-url-make"
@@ -61,16 +71,16 @@ export function UrlMakerSection({ heading, body }: { heading?: string; body?: st
           placeholder="Jordan Bennett"
           className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
           style={{
-            background: "var(--wb-bg)",
-            border: "1px solid var(--wb-border)",
-            color: "var(--wb-text)",
+            background: "#111111",
+            border: "2px solid #f2f2f0",
+            color: "#f3f3f1",
             borderRadius: "var(--wb-radius-btn)",
           }}
         />
         <button
           id="page-url-make-submit"
           type="submit"
-          disabled={!name.trim()}
+          disabled={busy || !name.trim()}
           className="px-4 py-2 text-sm font-semibold disabled:opacity-50"
           style={{
             background: "var(--wb-accent)",
@@ -78,29 +88,11 @@ export function UrlMakerSection({ heading, body }: { heading?: string; body?: st
             borderRadius: "var(--wb-radius-btn)",
           }}
         >
-          Make .com
+          {busy ? "Searching…" : "Search public domains"}
         </button>
       </form>
       {error ? <p className="mt-2 text-sm">{error}</p> : null}
-      {made ? (
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <p id="page-url-made-value" className="min-w-0 flex-1 break-all text-lg" style={{ fontFamily: "var(--wb-display)" }}>
-            {made}
-          </p>
-          <button
-            id="page-url-make-copy"
-            type="button"
-            onClick={() => void copy()}
-            className="px-3 py-2 text-xs font-semibold"
-            style={{
-              border: "1px solid var(--wb-border)",
-              borderRadius: "var(--wb-radius-btn)",
-            }}
-          >
-            {copied ? "Copied" : "Copy"}
-          </button>
-        </div>
-      ) : null}
+      <DomainHits hits={hits} listId="page-url-made-value" />
     </div>
   );
 }

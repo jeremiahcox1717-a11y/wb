@@ -1,5 +1,7 @@
 import { answerLocally, currentClock, tryFactualAnswer } from "./answer";
 import { applyLocalDesign, wantsSiteChange } from "./local-designer";
+import { formatDomainSearch, searchPublicDomains } from "../domain-shop";
+import { looksLikeUrlMake } from "../url-guard";
 import { siteSchema, type Site } from "../schema";
 import type { StudioSettings } from "../store";
 
@@ -127,6 +129,7 @@ Answer their questions in plain English. Be direct and useful. You may answer ge
 
 You also know this site:
 - The website builder chat can rebuild the page when they ask (bakery, portfolio, colors, and so on).
+- URL maker: search a real public domain, then buy it at GoDaddy, Namecheap, or Porkbun. A made-up string is not a working internet address. After they pay the registrar, that URL works everywhere.
 - URL scanner: paste a link, YES means it looks safe, NO means do not open it.
 - Name scanner: YES means someone else uses the name publicly.
 - Currency: they can type or pick from and to currencies and convert both ways.
@@ -227,6 +230,11 @@ export async function customizeSite(input: {
 }): Promise<{ site: Site; reply: string; engine: "llm" | "local"; warning?: string; changed: boolean }> {
   const creds = credentials(input.settings);
   const history = input.history ?? [];
+
+  if (looksLikeUrlMake(input.message)) {
+    const result = await searchPublicDomains(input.message);
+    return { site: input.site, reply: formatDomainSearch(result), engine: "local", changed: false };
+  }
 
   const fact = tryFactualAnswer(input.site, input.message);
   if (fact) {

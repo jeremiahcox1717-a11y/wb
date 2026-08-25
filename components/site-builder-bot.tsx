@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { looksLikeMoney, parseMoney } from "@/lib/currency";
 import type { Site } from "@/lib/schema";
-import { extractUrl, formatAnswer, generateUrl, looksLikeUrlMake, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
+import { extractUrl, formatAnswer, looksLikeUrlMake, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -48,15 +48,17 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
       }
 
       if (looksLikeUrlMake(trimmed)) {
-        const generated = generateUrl(trimmed);
-        if (!generated.ok) {
-          setTurns((current) => [...current, { role: "assistant", content: generated.error }]);
+        const response = await fetch("/api/domains/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: trimmed }),
+        });
+        const data = (await response.json()) as { error?: string; summary?: string };
+        if (!response.ok) {
+          setTurns((current) => [...current, { role: "assistant", content: data.error || "I could not search that name." }]);
           return;
         }
-        setTurns((current) => [
-          ...current,
-          { role: "assistant", content: `Here’s the URL: ${generated.url}` },
-        ]);
+        setTurns((current) => [...current, { role: "assistant", content: data.summary || "Search done." }]);
         return;
       }
 

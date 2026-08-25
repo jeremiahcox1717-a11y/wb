@@ -1,12 +1,14 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { generateUrl, type UrlScan } from "@/lib/url-guard";
+import { DomainHits } from "@/components/domain-hits";
+import type { DomainHit } from "@/lib/domain-shop";
+import type { UrlScan } from "@/lib/url-guard";
 
 export function UrlDesk() {
   const [makeInput, setMakeInput] = useState("");
   const [scanInput, setScanInput] = useState("");
-  const [made, setMade] = useState("");
+  const [hits, setHits] = useState<DomainHit[]>([]);
   const [result, setResult] = useState<UrlScan | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -41,15 +43,30 @@ export function UrlDesk() {
 
   async function onMake(event: FormEvent) {
     event.preventDefault();
-    const generated = generateUrl(makeInput);
-    if (!generated.ok) {
-      setError(generated.error);
-      setMade("");
-      return;
+    setBusy(true);
+    setError("");
+    setResult(null);
+    try {
+      const response = await fetch("/api/domains/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: makeInput }),
+      });
+      const data = (await response.json()) as { error?: string; hits?: DomainHit[] };
+      if (!response.ok) {
+        setHits([]);
+        setError(data.error || "Could not search that name.");
+        return;
+      }
+      const next = data.hits ?? [];
+      setHits(next);
+      const first = next[0];
+      if (first) setScanInput(first.url);
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setBusy(false);
     }
-    setMade(generated.url);
-    setScanInput(generated.url);
-    await scan(generated.url);
   }
 
   async function onScan(event: FormEvent) {
@@ -60,14 +77,13 @@ export function UrlDesk() {
   return (
     <div id="url-desk" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-2 text-[#f3f3f1]">
       <p className="text-xs leading-5 text-[#a3a39b]">
-        Make a clean .com from a name, or paste a link. Answers <strong className="text-[#f3f3f1]">YES</strong> or{" "}
-        <strong className="text-[#f3f3f1]">NO</strong>.
+        Search a real public .com, then buy it at GoDaddy so it works everywhere. This site cannot issue the domain itself. Or paste a link for YES/NO.
       </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <form onSubmit={onMake} className="space-y-1.5">
           <label htmlFor="url-make-input" className="block text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
-            Make a URL from a name
+            Search a public domain
           </label>
           <input
             id="url-make-input"
@@ -82,7 +98,7 @@ export function UrlDesk() {
             disabled={busy || !makeInput.trim()}
             className="bg-[#f2f2f0] px-2.5 py-1.5 text-[11px] font-semibold text-[#111111] disabled:opacity-50"
           >
-            Make URL
+            {busy ? "Searching…" : "Search"}
           </button>
         </form>
 
@@ -103,16 +119,12 @@ export function UrlDesk() {
             disabled={busy || !scanInput.trim()}
             className="border border-[#f2f2f0] px-2.5 py-1.5 text-[11px] font-semibold text-[#f2f2f0] disabled:opacity-50"
           >
-            {busy ? "Scanning…" : "Scan"}
+            {busy ? "Working…" : "Scan"}
           </button>
         </form>
       </div>
 
-      {made ? (
-        <p className="mt-2 break-all text-xs text-[#f2f2f0]">
-          Made: <span id="url-made-value">{made}</span>
-        </p>
-      ) : null}
+      <DomainHits hits={hits} compact listId="url-made-value" />
 
       {error ? <p className="mt-2 text-xs text-[#e8a0a0]">{error}</p> : null}
 

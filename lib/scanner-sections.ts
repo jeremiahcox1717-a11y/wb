@@ -4,7 +4,7 @@ export const urlMakerSection: SiteSection = {
   id: "url-make",
   type: "urlMaker",
   heading: "URL maker",
-  body: "Type a name. I’ll make it into a .com address — Jordan Bennett becomes jordanbennett.com.",
+  body: "Type a name. I search the public internet. If the .com is free, buy it at GoDaddy so that official address works on every phone, app, and browser.",
 };
 
 export const urlScannerSection: SiteSection = {

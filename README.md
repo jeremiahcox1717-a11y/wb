@@ -38,7 +38,7 @@ npm run dev
 
 On the homepage you also get:
 
-- **URL maker** — type a name, get a .com address
+- **URL maker** — search a real public .com, then register it at GoDaddy (or Namecheap / Porkbun) so it works everywhere
 - **URL scanner** — paste a link, get YES or NO
 - **Name scanner** — check if someone else already uses a name
 - **Currency calculator** — pick any from/to pair, swap directions, and see all live rates
@@ -50,7 +50,7 @@ On the homepage you also get:
 
 After you sign in, the **Website builder** chat sits on the site. Type things like:
 
-- “Make a URL for Jordan Bennett”
+- “Make a URL for Jordan Bennett” (searches live availability, then a registrar buy link)
 - “How does the URL scanner work?”
 - “Turn this into a bakery called Hearth & Crumb”
 - “Make a dark editorial portfolio”

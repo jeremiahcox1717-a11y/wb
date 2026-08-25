@@ -32,7 +32,7 @@ export function OwnerTools({ onSite }: { onSite: (site: Site) => void }) {
             tab === "urls" ? "bg-[#16161c] text-[#f2f2f0]" : "text-[#7d7d7d]"
           }`}
         >
-          URL check
+          URLs
         </button>
       </div>
       {tab === "build" ? <SiteBuilderBot onSite={onSite} /> : <UrlDesk />}

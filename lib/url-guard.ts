@@ -89,9 +89,12 @@ export function nameToDotComHost(input: string) {
 export function looksLikeUrlMake(text: string) {
   const t = text.trim();
   if (!t) return false;
-  if (/\b(make|create|build|give me)\b.{0,48}\b(url|link|domain)\b/i.test(t)) return true;
+  if (/\bscan(?:ner)?\b/i.test(t) && /\b(url|link)\b/i.test(t)) return false;
+  if (/\b(make|create|build|give me|get me|find me|register|buy)\b.{0,48}\b(url|domain|\.com)\b/i.test(t)) return true;
+  if (/\bneed (?:a |an |me a )?(?:public |official |real )?(?:url|domain)\b/i.test(t)) return true;
   if (/\bat\s+\.com\b/i.test(t)) return true;
   if (/\burl for\b/i.test(t)) return true;
+  if (/\bdomain (?:for|search|availability)\b/i.test(t)) return true;
   return false;
 }
 
