@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CurrencyCalculator } from "@/components/currency-calculator";
 import { NameScannerSection } from "@/components/name-scanner-section";
 import { NotebookSection } from "@/components/notebook-section";
+import { UrlMakerSection } from "@/components/url-maker-section";
 import { UrlScannerSection } from "@/components/url-scanner-section";
 import type { Site, SitePage, SiteSection } from "@/lib/schema";
 import { radiusValue } from "@/lib/schema";
@@ -431,6 +432,12 @@ function renderSection(section: SiteSection, site: Site) {
               </article>
             ))}
           </div>
+        </SectionFrame>
+      );
+    case "urlMaker":
+      return (
+        <SectionFrame key={section.id ?? "urlMaker"} id={section.id} compact>
+          <UrlMakerSection heading={section.heading} body={section.body} />
         </SectionFrame>
       );
     case "urlScanner":

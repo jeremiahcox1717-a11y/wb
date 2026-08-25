@@ -1,4 +1,5 @@
 import type { Site } from "../schema";
+import { generateUrl, looksLikeUrlMake } from "../url-guard";
 
 const CLOCK_ZONES = [
   { id: "Europe/London", label: "London" },
@@ -80,6 +81,12 @@ export function tryFactualAnswer(site: Site, message: string, now = new Date()):
       const shown = op === "*" || op === "x" || op === "×" ? "×" : op;
       return `${left} ${shown} ${right} = ${Number.isInteger(value) ? String(value) : String(Number(value.toFixed(4)))}`;
     }
+  }
+
+  if (looksLikeUrlMake(text) || /\bmake\b.+\bat\s+\.com\b/i.test(text)) {
+    const made = generateUrl(text);
+    if (!made.ok) return made.error;
+    return `Here’s the URL: ${made.url}`;
   }
 
   return null;

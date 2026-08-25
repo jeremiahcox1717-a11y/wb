@@ -60,20 +60,20 @@ export function UrlDesk() {
   return (
     <div id="url-desk" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-2 text-[#f3f3f1]">
       <p className="text-xs leading-5 text-[#a3a39b]">
-        Make a clean URL, or paste a link. Answers <strong className="text-[#f3f3f1]">YES</strong> or{" "}
+        Make a clean .com from a name, or paste a link. Answers <strong className="text-[#f3f3f1]">YES</strong> or{" "}
         <strong className="text-[#f3f3f1]">NO</strong>.
       </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <form onSubmit={onMake} className="space-y-1.5">
           <label htmlFor="url-make-input" className="block text-[10px] tracking-[0.2em] text-[#7d7d7d] uppercase">
-            Make a URL
+            Make a URL from a name
           </label>
           <input
             id="url-make-input"
             value={makeInput}
             onChange={(event) => setMakeInput(event.target.value)}
-            placeholder="mybakery.com"
+            placeholder="Jordan Bennett"
             className="w-full border border-[#2a2a32] bg-[#16161c] px-2 py-1.5 text-sm outline-none"
           />
           <button

@@ -1,5 +1,12 @@
 import { parseSite, type Site, type SiteSection } from "./schema";
 
+export const urlMakerSection: SiteSection = {
+  id: "url-make",
+  type: "urlMaker",
+  heading: "URL maker",
+  body: "Type a name. I’ll make it into a .com address — Jordan Bennett becomes jordanbennett.com.",
+};
+
 export const urlScannerSection: SiteSection = {
   id: "url-scan",
   type: "urlScanner",
@@ -43,12 +50,14 @@ export function ensureScannerSections(site: Site): Site {
   const next = parseSite(JSON.parse(JSON.stringify(site)));
   const page = next.pages.find((item) => item.slug === "/") ?? next.pages[0];
   if (!page) return next;
+  upsertBeforeFooter(page.sections, urlMakerSection);
   upsertBeforeFooter(page.sections, urlScannerSection);
   upsertBeforeFooter(page.sections, nameScannerSection);
   upsertBeforeFooter(page.sections, currencyCalculatorSection);
   upsertBeforeFooter(page.sections, notebookSection);
 
   const extras = [
+    { label: "URL make", href: "#url-make" },
     { label: "URL scan", href: "#url-scan" },
     { label: "Name scan", href: "#name-scan" },
     { label: "Currency", href: "#currency" },

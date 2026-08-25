@@ -23,14 +23,18 @@ describe("url guard", () => {
     expect(scanUrl("https://paypal-secure-login.example.biz/verify").answer).toBe("no");
   });
 
-  it("makes a https url from a domain and a path from a name", () => {
+  it("makes a .com address from a name", () => {
     const domain = generateUrl("MyBakery.com");
     expect(domain.ok).toBe(true);
-    if (domain.ok) expect(domain.url).toBe("https://mybakery.com/");
+    if (domain.ok) expect(domain.url).toBe("https://mybakery.com");
 
-    const page = generateUrl("About us", "https://example.com");
-    expect(page.ok).toBe(true);
-    if (page.ok) expect(page.url).toBe("https://example.com/about-us");
+    const fromName = generateUrl("Jordan Bennett");
+    expect(fromName.ok).toBe(true);
+    if (fromName.ok) expect(fromName.url).toBe("https://jordanbennett.com");
+
+    const fromSentence = generateUrl("make a url for Hearth & Crumb at .com");
+    expect(fromSentence.ok).toBe(true);
+    if (fromSentence.ok) expect(fromSentence.url).toBe("https://hearthandcrumb.com");
   });
 
   it("pulls a url out of a sentence", () => {

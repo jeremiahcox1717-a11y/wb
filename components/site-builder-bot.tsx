@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { looksLikeMoney, parseMoney } from "@/lib/currency";
 import type { Site } from "@/lib/schema";
-import { extractUrl, formatAnswer, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
+import { extractUrl, formatAnswer, generateUrl, looksLikeUrlMake, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -44,6 +44,19 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
           return;
         }
         setTurns((current) => [...current, { role: "assistant", content: data.summary || "Converted." }]);
+        return;
+      }
+
+      if (looksLikeUrlMake(trimmed)) {
+        const generated = generateUrl(trimmed);
+        if (!generated.ok) {
+          setTurns((current) => [...current, { role: "assistant", content: generated.error }]);
+          return;
+        }
+        setTurns((current) => [
+          ...current,
+          { role: "assistant", content: `Here’s the URL: ${generated.url}` },
+        ]);
         return;
       }
 

@@ -70,6 +70,7 @@ describe("notebook", () => {
 describe("default site tools", () => {
   it("includes url, name, currency, and notebook sections", () => {
     const types = defaultSite().pages[0]?.sections.map((section) => section.type) ?? [];
+    expect(types).toContain("urlMaker");
     expect(types).toContain("urlScanner");
     expect(types).toContain("nameScanner");
     expect(types).toContain("currencyCalculator");

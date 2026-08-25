@@ -66,32 +66,72 @@ export function slugify(value: string) {
   return slug || "page";
 }
 
-export function generateUrl(input: string, origin = "https://example.com") {
+export function nameToDotComHost(input: string) {
+  let raw = input.trim().toLowerCase();
+  if (!raw) return "";
+  raw = raw.replace(/^https?:\/\//, "").replace(/^www\./, "");
+  raw = raw.replace(/\/.*$/, "");
+  if (/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i.test(raw) && !raw.includes(" ")) {
+    return raw;
+  }
+  raw = raw.replace(/\.(com|net|org|io|co|uk|ca|us)$/i, "");
+  const label = raw
+    .normalize("NFKD")
+    .replace(/&/g, "and")
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/[\s_-]+/g, "")
+    .slice(0, 63);
+  if (!label) return "";
+  return `${label}.com`;
+}
+
+export function looksLikeUrlMake(text: string) {
+  const t = text.trim();
+  if (!t) return false;
+  if (/\b(make|create|build|give me)\b.{0,48}\b(url|link|domain)\b/i.test(t)) return true;
+  if (/\bat\s+\.com\b/i.test(t)) return true;
+  if (/\burl for\b/i.test(t)) return true;
+  return false;
+}
+
+export function nameForUrlMake(text: string) {
+  let t = text.trim();
+  t = t.replace(/^(please\s+)?((can|could) you\s+)?/i, "");
+  t = t.replace(/^(make|create|build|give me)\s+(a\s+|an\s+|me\s+)?/i, "");
+  t = t.replace(/\b(url|link|domain|web address|website address)\b/gi, " ");
+  t = t.replace(/\bfor\b/gi, " ");
+  t = t.replace(/\bat\s+\.com\b/gi, " ");
+  t = t.replace(/\s*\.com\s*$/i, "");
+  t = t.replace(/["“”]+/g, " ").replace(/\s+/g, " ").trim();
+  return t || null;
+}
+
+export function generateUrl(input: string) {
   const trimmed = input.trim();
   if (!trimmed) {
-    return { ok: false as const, error: "Type a name or paste a link first." };
+    return { ok: false as const, error: "Type a name first." };
   }
 
   const extracted = extractUrl(trimmed);
-  if (extracted) {
-    const scanned = scanUrl(extracted);
-    if (scanned.url) return { ok: true as const, url: scanned.url, scan: scanned };
+  if (extracted && !looksLikeUrlMake(trimmed) && /https?:\/\//i.test(trimmed)) {
     const withScheme = extracted.includes("://") ? extracted : `https://${extracted}`;
-    return { ok: true as const, url: withScheme, scan: scanUrl(withScheme) };
+    const scanned = scanUrl(withScheme);
+    const url = (scanned.url || withScheme).replace(/\/$/, "");
+    try {
+      return { ok: true as const, url, host: new URL(withScheme).hostname, scan: scanned };
+    } catch {
+      return { ok: true as const, url, host: withScheme, scan: scanned };
+    }
   }
 
-  if (/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/i.test(trimmed) && !trimmed.includes(" ")) {
-    const url = `https://${trimmed.toLowerCase()}`;
-    return { ok: true as const, url, scan: scanUrl(url) };
+  const source = nameForUrlMake(trimmed) || trimmed;
+  const host = nameToDotComHost(source);
+  if (!host) {
+    return { ok: false as const, error: "Type a name to turn into a .com address." };
   }
-
-  try {
-    const base = new URL(origin);
-    const url = new URL(`/${slugify(trimmed)}`, `${base.protocol}//${base.host}`).toString();
-    return { ok: true as const, url, scan: scanUrl(url) };
-  } catch {
-    return { ok: false as const, error: "Could not turn that into a URL." };
-  }
+  const url = `https://${host}`;
+  return { ok: true as const, url, host, scan: scanUrl(url) };
 }
 
 function isPrivateIPv4(host: string) {

@@ -175,6 +175,13 @@ const footerSectionSchema = z.object({
   note: z.string().max(200).optional(),
 });
 
+const urlMakerSectionSchema = z.object({
+  id: z.string().max(80).optional(),
+  type: z.literal("urlMaker"),
+  heading: z.string().max(160).optional(),
+  body: z.string().max(400).optional(),
+});
+
 const urlScannerSectionSchema = z.object({
   id: z.string().max(80).optional(),
   type: z.literal("urlScanner"),
@@ -215,6 +222,7 @@ export const sectionSchema = z.discriminatedUnion("type", [
   ctaSectionSchema,
   contactSectionSchema,
   teamSectionSchema,
+  urlMakerSectionSchema,
   urlScannerSectionSchema,
   nameScannerSectionSchema,
   currencyCalculatorSectionSchema,

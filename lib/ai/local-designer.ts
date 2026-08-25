@@ -1,6 +1,7 @@
 import { palettes } from "../default-site";
 import type { Site, SiteSection } from "../schema";
 import { parseSite } from "../schema";
+import { looksLikeUrlMake } from "../url-guard";
 import { answerLocally } from "./answer";
 import { templateMatchers, templates } from "./templates";
 
@@ -48,6 +49,7 @@ function applyName(site: Site, name: string) {
 export function wantsSiteChange(text: string) {
   const t = text.trim();
   if (!t) return false;
+  if (looksLikeUrlMake(t)) return false;
 
   const explicitBuild =
     /\b(build|rebuild|redesign|turn (?:this|it) into|make (?:this|it|me|a |the site)|create (?:a |the )?(?:web ?site|site|page)|add (?:an? )?(?:faq|pricing|testimonial|section)|rename|call(?:ed)? it|(?:use|switch to) a .+ palette)\b/i.test(
