@@ -264,7 +264,10 @@ function sourceFor(message: string, cloned: boolean): ClientProject["source"] {
 function cleanBuildReply(reply: string, project: ClientProject) {
   const trimmed = reply
     .replace(/your private site/gi, "a new website for them")
+    .replace(/fresh private site/gi, "new website")
+    .replace(/private site/gi, "new website")
     .replace(/It is live on your private site now\./gi, "")
+    .replace(/It is live on a new website for them now\./gi, "")
     .trim();
   return projectReply(project, trimmed || `Built a new website called ${project.name}.`);
 }

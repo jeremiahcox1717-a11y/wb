@@ -165,8 +165,18 @@ export function applyClientIdentity(site: Site, message: string): Site {
     if (footer && footer.type === "footer") footer.note = label.slice(0, 200);
   } else if (isPlaceholderBrand(next.identity.ownerName) && !isPlaceholderBrand(next.identity.siteName)) {
     next.identity.ownerName = next.identity.siteName;
-  } else if (isPlaceholderBrand(next.identity.siteName) && next.identity.tagline) {
-    next.identity.siteName = next.identity.tagline.slice(0, 80) || next.identity.siteName;
+  } else if (isPlaceholderBrand(next.identity.siteName)) {
+    const pair = message.match(
+      /\b(white|black|blue|navy|green|red|gold|cream|pink|purple|teal)\s+and\s+(white|black|blue|navy|green|red|gold|cream|pink|purple|teal)\b/i,
+    );
+    if (pair) {
+      const name = `${pair[1][0].toUpperCase()}${pair[1].slice(1).toLowerCase()} and ${pair[2].toLowerCase()}`;
+      next.identity.siteName = name;
+      next.identity.ownerName = name;
+      next.seo.title = name;
+      const hero = next.pages[0]?.sections.find((section) => section.type === "hero");
+      if (hero && hero.type === "hero") hero.heading = name;
+    }
   }
   return parseSite(next);
 }
