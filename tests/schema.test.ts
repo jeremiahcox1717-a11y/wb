@@ -37,6 +37,22 @@ describe("local designer", () => {
     expect(types).toContain("pricing");
   });
 
+  it("restores the Jordan Bennett homepage when asked to change it back", () => {
+    const bakery = applyLocalDesign(defaultSite(), "make this a coffee shop").site;
+    const { site, changed, reply } = applyLocalDesign(
+      bakery,
+      "change the website back to jordan bennett",
+    );
+    expect(changed).toBe(true);
+    expect(site.identity.siteName).toBe("Jordan Bennett");
+    expect(site.identity.ownerName).toBe("Jordan Bennett");
+    expect(site.theme.accent.toLowerCase()).toBe("#d4a574");
+    const hero = site.pages[0]?.sections.find((section) => section.type === "hero");
+    expect(hero && hero.type === "hero" ? hero.heading : "").toBe("Jordan Bennett");
+    expect(reply.toLowerCase()).toMatch(/jordan bennett/);
+    expect(site.identity.tagline.toLowerCase()).not.toMatch(/coffee/);
+  });
+
   it("builds a fresh personal site when asked to build a website", () => {
     const { site, reply, changed } = applyLocalDesign(defaultSite(), "build me a website");
     expect(changed).toBe(true);

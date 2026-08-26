@@ -111,10 +111,21 @@ function isQuestionOnly(text: string) {
   );
 }
 
+function wantsPersonalHome(text: string) {
+  const t = text.trim();
+  if (!t) return false;
+  if (/\b(back to|restore|reset|original|default|again)\b/i.test(t) && /\bjordan/i.test(t)) return true;
+  if (/\b(change|put|set|make|take|go)\b.{0,48}\b(website|site|page|homepage)\b.{0,32}\bback\b/i.test(t)) return true;
+  if (/\b(restore|reset)\b.{0,32}\b(site|website|page|homepage|original|default)\b/i.test(t)) return true;
+  if (/\b(my original|the original|default)\b.{0,24}\b(site|website|page|homepage)\b/i.test(t)) return true;
+  return false;
+}
+
 export function wantsSiteChange(text: string) {
   const t = text.trim();
   if (!t) return false;
   if (looksLikeUrlMake(t) || looksLikeCloneRequest(t)) return false;
+  if (wantsPersonalHome(t)) return true;
   if (isGreeting(t) || isQuestionOnly(t)) return false;
   if (
     /^(how (?:do i|can i)|what can you|explain how|can you tell me how)\b/i.test(t) &&
@@ -378,6 +389,16 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   const text = message.trim();
   if (!text) {
     return { site, reply: "Ask a question, or tell me what to change on your private site.", changed: false };
+  }
+
+  if (wantsPersonalHome(text)) {
+    const next = personalFresh(site);
+    next.updatedAt = new Date().toISOString();
+    return {
+      site: parseSite(next),
+      reply: "Restored your private Jordan Bennett homepage. It is live now.",
+      changed: true,
+    };
   }
 
   if (!wantsSiteChange(text)) {
