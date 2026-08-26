@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.env
+.env.local
+data/settings.json
+data/admin-password.txt
+coverage
+*.md
+tests

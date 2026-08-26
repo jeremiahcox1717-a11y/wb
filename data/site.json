@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-25T06:16:00.000Z",
+  "identity": {
+    "siteName": "Jordan Bennett",
+    "ownerName": "Jordan Bennett",
+    "tagline": "A private site for personal use.",
+    "location": "",
+    "socials": []
+  },
+  "seo": {
+    "title": "Jordan Bennett",
+    "description": "Jordan Bennett’s private site. Locked behind a password, built for personal use."
+  },
+  "theme": {
+    "background": "#14110e",
+    "surface": "#1e1914",
+    "text": "#f4ece3",
+    "muted": "#b9a89a",
+    "accent": "#d4a574",
+    "accentText": "#1a140f",
+    "border": "#3a3128",
+    "fontDisplay": "Fraunces",
+    "fontBody": "Outfit",
+    "radius": "soft"
+  },
+  "nav": [
+    { "label": "Home", "href": "/" },
+    { "label": "Work", "href": "#work" },
+    { "label": "About", "href": "#about" },
+    { "label": "URL make", "href": "#url-make" },
+    { "label": "URL scan", "href": "#url-scan" },
+    { "label": "Name scan", "href": "#name-scan" },
+    { "label": "Currency", "href": "#currency" },
+    { "label": "Notebook", "href": "#notebook" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "slug": "/",
+      "title": "Home",
+      "sections": [
+        {
+          "type": "hero",
+          "layout": "cinematic",
+          "kicker": "Private · owner only",
+          "heading": "Jordan Bennett",
+          "subheading": "This is your private homepage. It stays yours. The builder on the right makes NEW websites for other people — those get their own public links.",
+          "primaryCta": { "label": "See the tools", "href": "#work" },
+          "secondaryCta": { "label": "Get in touch", "href": "#contact" }
+        },
+        {
+          "id": "work",
+          "type": "features",
+          "heading": "What this space is for",
+          "subheading": "A private desk for Jordan Bennett. New websites for other people live on their own links.",
+          "items": [
+            {
+              "title": "A private homepage",
+              "body": "This page is yours. The builder does not replace it with a bakery, a clone, or a new color scheme."
+            },
+            {
+              "title": "New sites for other people",
+              "body": "Ask the builder to clone a public page or build from scratch. Each one opens at /s/… so other people can visit it."
+            },
+            {
+              "title": "Your tools stay here",
+              "body": "URL maker, scanners, currency, and the notebook stay on this locked desk."
+            }
+          ]
+        },
+        {
+          "id": "about",
+          "type": "richtext",
+          "eyebrow": "About",
+          "heading": "A short note about you.",
+          "body": "This desk is for Jordan Bennett. The builder makes separate websites for other people. It is not a shop."
+        },
+        {
+          "type": "stats",
+          "items": [
+            { "value": "Live", "label": "Saved the moment you send" },
+            { "value": "1", "label": "Owner of the studio" },
+            { "value": "∞", "label": "Directions this site can take" }
+          ]
+        },
+        {
+          "id": "contact",
+          "type": "contact",
+          "heading": "Say hello",
+          "body": "Add your email, phone, or city in the studio and this block will fill itself in."
+        },
+        {
+          "id": "url-make",
+          "type": "urlMaker",
+          "heading": "URL maker",
+          "body": "Type a name. I search the public internet. If the .com is free, buy it at GoDaddy so that official address works on every phone, app, and browser."
+        },
+        {
+          "id": "url-scan",
+          "type": "urlScanner",
+          "heading": "URL scanner",
+          "body": "Paste a link someone sent you. The answer is YES or NO."
+        },
+        {
+          "id": "name-scan",
+          "type": "nameScanner",
+          "heading": "Name scanner",
+          "body": "Type a name. YES means someone else already uses it publicly. NO means no public match, or it is the owner of this site."
+        },
+        {
+          "id": "currency",
+          "type": "currencyCalculator",
+          "heading": "Currency calculator",
+          "body": "Type a country or currency on both sides, like Canada to Japan. Convert either way and see every live rate."
+        },
+        {
+          "id": "notebook",
+          "type": "notebook",
+          "heading": "Notebook",
+          "body": "Save a person’s name, business, phone number, and email. Only you can see this list."
+        },
+        {
+          "type": "footer",
+          "note": "Jordan Bennett · private, owner only."
+        }
+      ]
+    }
+  ]
+}
