@@ -50,6 +50,8 @@ On the homepage you also get:
 
 After you sign in, the **Website builder** chat sits on the site. Type things like:
 
+- “Clone https://example.com” or paste a public https link
+- “Build a website and make it white and blue”
 - “Make a URL for Jordan Bennett” (searches live availability, then a registrar buy link)
 - “How does the URL scanner work?”
 - “Turn this into a bakery called Hearth & Crumb”
@@ -57,9 +59,9 @@ After you sign in, the **Website builder** chat sits on the site. Type things li
 - “Add pricing and an FAQ”
 - “My email is you@example.com and I’m in Austin”
 
-Ask a question and you get an answer — the page stays put. Tell it what to build or any customization (colors, heading, sections, a barbershop, a bakery) and the site updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
+Ask a question and you get an answer — the page stays put. Paste a public https link to clone that page onto your private site (a recreation from the public HTML, not a pixel-perfect dump). Tell it to build from scratch — colors, a heading, a business type — and the site updates as soon as the bot replies. You can also type `100 CAD to EUR` in the chat, or use the currency section to pick any two currencies and convert both ways.
 
-Without an API key, the built-in designer still builds bakeries, coffee shops, restaurants, gyms, portfolios, and studios, and the bot still answers questions about this site. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model answers and rewrites. That key is stored in `data/settings.json`, which is gitignored.
+Without an API key, the built-in designer still clones public pages, builds from colors and words, and answers questions about this site. Paste an OpenAI-compatible key in **Studio → Settings** (or set `OPENAI_API_KEY`) for full language-model answers and rewrites. That key is stored in `data/settings.json`, which is gitignored.
 
 ## Deploy
 

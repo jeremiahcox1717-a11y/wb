@@ -37,10 +37,25 @@ describe("local designer", () => {
     expect(types).toContain("pricing");
   });
 
-  it("asks for a business type when told to build a website without details", () => {
-    const { site, reply } = applyLocalDesign(defaultSite(), "build me a website");
+  it("builds a fresh personal site when asked to build a website", () => {
+    const { site, reply, changed } = applyLocalDesign(defaultSite(), "build me a website");
+    expect(changed).toBe(true);
+    expect(site.identity.ownerName).toBe("Jordan Bennett");
     expect(site.identity.siteName).toBe("Jordan Bennett");
-    expect(reply.toLowerCase()).toMatch(/bakery|coffee|restaurant/);
+    expect(reply.toLowerCase()).toMatch(/fresh|scratch|live/);
+  });
+
+  it("builds from scratch in white and blue without treating colors as a business", () => {
+    const { site, changed, reply } = applyLocalDesign(
+      defaultSite(),
+      "build a website and make it white and blue",
+    );
+    expect(changed).toBe(true);
+    expect(site.identity.ownerName).toBe("Jordan Bennett");
+    expect(site.identity.tagline.toLowerCase()).not.toMatch(/white and blue/);
+    expect(site.theme.background.toLowerCase()).toBe("#f7f7f4");
+    expect(site.theme.accent.toLowerCase()).toBe("#1d4e89");
+    expect(reply.toLowerCase()).toMatch(/white|blue|live/);
   });
 
   it("answers questions without rewriting the site", () => {

@@ -104,7 +104,7 @@ export function answerLocally(site: Site, message: string): string {
   if (/\b(what can you do|help|how (?:do i|does this) work|what is this)\b/i.test(lower)) {
     return [
       "Ask me questions here. Try “what’s the time?”, money like 100 CAD to EUR, or “make a URL for Jordan Bennett”.",
-      "You can also tell me any customization — colors, heading, business type, sections — and I will update this private page.",
+      "Paste a public https link to clone that page onto this private site, or tell me to build from scratch — white and blue, a heading, a bakery.",
       "On the page: URL maker (search then buy a real .com), URL scanner, name scanner, currency converter, and a notebook.",
     ].join(" ");
   }
@@ -138,7 +138,7 @@ export function answerLocally(site: Site, message: string): string {
   }
 
   if (/\b(how (?:do i|can i) (?:change|edit|rebuild|make))\b/i.test(lower) || /\bbuild(?:er)? bot\b/i.test(lower)) {
-    return "Tell me what to change — a bakery, a color, a heading, a new section — and I will update this private page. Questions stay as answers.";
+    return "Tell me what to build — clone a public https link, a white and blue page from scratch, a heading, a bakery — and I will update this private page. Questions stay as answers.";
   }
 
   const clock = currentClock(site);

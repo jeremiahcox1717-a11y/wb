@@ -1,7 +1,7 @@
-import { palettes } from "../default-site";
+import { defaultSite, palettes } from "../default-site";
 import type { Site, SiteSection, SiteTheme } from "../schema";
 import { parseSite } from "../schema";
-import { looksLikeUrlMake } from "../url-guard";
+import { looksLikeCloneRequest, looksLikeUrlMake } from "../url-guard";
 import { answerLocally } from "./answer";
 import { genericBusiness, templateMatchers, templates } from "./templates";
 
@@ -114,8 +114,8 @@ function isQuestionOnly(text: string) {
 export function wantsSiteChange(text: string) {
   const t = text.trim();
   if (!t) return false;
-  if (looksLikeUrlMake(t)) return false;
-  if (isBareBuild(t) || isGreeting(t) || isQuestionOnly(t)) return false;
+  if (looksLikeUrlMake(t) || looksLikeCloneRequest(t)) return false;
+  if (isGreeting(t) || isQuestionOnly(t)) return false;
   if (
     /^(how (?:do i|can i)|what can you|explain how|can you tell me how)\b/i.test(t) &&
     !/\b(?:to|into|as)\s+["“A-Z]/i.test(t)
@@ -148,22 +148,50 @@ function tailAfter(text: string, re: RegExp) {
   return match?.[1]?.trim().replace(/[.]+$/, "") || null;
 }
 
-function hexColor(text: string) {
-  const match = text.match(/#([0-9a-f]{3,8})\b/i);
-  if (!match) return null;
-  const raw = match[1];
-  if (raw.length === 3) {
-    return `#${raw[0]}${raw[0]}${raw[1]}${raw[1]}${raw[2]}${raw[2]}`;
+function namedColorsInOrder(text: string) {
+  const hits: { name: string; value: string; index: number }[] = [];
+  for (const [name, value] of Object.entries(NAMED_COLORS)) {
+    const re = new RegExp(`\\b${name}\\b`, "gi");
+    let match: RegExpExecArray | null;
+    while ((match = re.exec(text))) {
+      hits.push({ name, value, index: match.index });
+    }
   }
-  if (raw.length === 6 || raw.length === 8) return `#${raw.slice(0, 6)}`;
-  return null;
+  hits.sort((a, b) => a.index - b.index);
+  const seen = new Set<string>();
+  return hits.filter((item) => {
+    if (seen.has(item.name)) return false;
+    seen.add(item.name);
+    return true;
+  });
 }
 
-function namedColor(text: string) {
-  for (const [name, value] of Object.entries(NAMED_COLORS)) {
-    if (new RegExp(`\\b${name}\\b`, "i").test(text)) return { name, value };
+function hexColorsInOrder(text: string) {
+  const hits: { name: string; value: string; index: number }[] = [];
+  const re = /#([0-9a-f]{3,8})\b/gi;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text))) {
+    const raw = match[1];
+    let value: string | null = null;
+    if (raw.length === 3) value = `#${raw[0]}${raw[0]}${raw[1]}${raw[1]}${raw[2]}${raw[2]}`;
+    else if (raw.length === 6 || raw.length === 8) value = `#${raw.slice(0, 6)}`;
+    if (value) hits.push({ name: value, value, index: match.index });
   }
-  return null;
+  return hits;
+}
+
+function colorsInMentionOrder(text: string) {
+  return [...namedColorsInOrder(text), ...hexColorsInOrder(text)].sort((a, b) => a.index - b.index);
+}
+
+function isColorOnlyPhrase(value: string) {
+  let next = value;
+  for (const name of Object.keys(NAMED_COLORS)) {
+    next = next.replace(new RegExp(`\\b${name}\\b`, "gi"), " ");
+  }
+  next = next.replace(/#[0-9a-f]{3,8}\b/gi, " ");
+  next = next.replace(/\b(and|or|with|plus|the|a|an|it|to|in|on|for|color|colour|colors|colours|theme|palette|background|accent|text)\b/gi, " ");
+  return !next.replace(/[^a-z0-9]+/gi, "").trim();
 }
 
 function isDarkHex(hex: string) {
@@ -199,6 +227,48 @@ function themeAround(color: string): Partial<SiteTheme> {
   };
 }
 
+function themeFromPair(background: string, accent: string): Partial<SiteTheme> {
+  return {
+    ...themeAround(background),
+    accent,
+    accentText: isDarkHex(accent) ? "#f7f7f4" : "#111111",
+  };
+}
+
+function personalFresh(previous: Site): Site {
+  const next = defaultSite();
+  next.identity = {
+    ...next.identity,
+    ownerName: previous.identity.ownerName,
+    email: previous.identity.email,
+    phone: previous.identity.phone,
+    location: previous.identity.location,
+    socials: previous.identity.socials,
+    siteName: previous.identity.ownerName || next.identity.siteName,
+  };
+  applyName(next, next.identity.ownerName);
+  return next;
+}
+
+function wantsFreshBuild(text: string) {
+  if (looksLikeCloneRequest(text)) return false;
+  if (templateMatchers.some((item) => item.re.test(text))) return false;
+  if (extractBusiness(text)) return false;
+  if (
+    /\b(heading|headline|title|tagline|subtitle|kicker|section|font)\b/i.test(text) &&
+    !/\b(from scratch|start over|new (?:web ?)?site)\b/i.test(text)
+  ) {
+    return false;
+  }
+  if (isBareBuild(text) || /\b(from scratch|start over)\b/i.test(text)) return true;
+  const build = text.match(
+    /\b(?:build|make|create|design|rebuild)\s+(?:me\s+)?(?:a |an |my |this |the )?(?:new )?(.+?)?(?:web ?site|website|site|page|homepage)\b/i,
+  );
+  if (!build) return false;
+  const middle = (build[1] || "").trim();
+  return !middle || isColorOnlyPhrase(middle) || /^(new|fresh|personal|private)$/i.test(middle);
+}
+
 function extractBusiness(text: string) {
   const patterns = [
     /\b(?:turn (?:this|it) into|rebuild (?:this|it) as|make (?:this|it)(?: into)?)\s+(?:a |an )?([^,.!?]+?)(?:\s+with\b|\s+and\s+add\b|[,.!?]|$)/i,
@@ -215,6 +285,7 @@ function extractBusiness(text: string) {
       .replace(/\b(website|site|page|homepage)\b/gi, "")
       .trim();
     if (!cleaned || /^(web\s*)?(site|page|homepage)$/i.test(cleaned)) continue;
+    if (isColorOnlyPhrase(cleaned)) continue;
     return cleaned.slice(0, 60);
   }
   return null;
@@ -305,14 +376,6 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
   }
 
   if (!wantsSiteChange(text)) {
-    if (isBareBuild(text)) {
-      return {
-        site,
-        reply:
-          "I can build it. Tell me the kind of site — bakery, coffee shop, restaurant, gym, portfolio, barbershop, or any other business — plus a color if you want, and I will rebuild this page for you.",
-        changed: false,
-      };
-    }
     return { site, reply: answerLocally(site, text), changed: false };
   }
 
@@ -328,11 +391,20 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
     if (kind) {
       next = genericBusiness(next, kind);
       notes.push(`Rebuilt your private site as a ${kind}.`);
+    } else if (wantsFreshBuild(text)) {
+      next = personalFresh(site);
+      notes.push("Built a fresh private site from scratch.");
     }
   }
 
+  const mentioned = colorsInMentionOrder(text);
   const palette = PALETTE_WORDS.find((item) => item.re.test(text));
-  if (palette) {
+  if (mentioned.length >= 2) {
+    const first = mentioned[0];
+    const second = mentioned[1];
+    next.theme = { ...next.theme, ...themeFromPair(first.value, second.value) };
+    notes.push(`Set the page to ${first.name} with ${second.name} accents.`);
+  } else if (palette) {
     next.theme = { ...next.theme, ...palettes[palette.key] };
     notes.push(`Applied the ${palettes[palette.key].label} palette.`);
   } else if (/\b(dark(?:er)?|night|black background)\b/i.test(text) && !template) {
@@ -343,10 +415,9 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
     notes.push("Switched the site to a light paper palette.");
   }
 
-  const hex = hexColor(text);
-  const named = namedColor(text);
-  const color = hex || named?.value;
-  if (color) {
+  if (mentioned.length === 1) {
+    const named = mentioned[0];
+    const color = named.value;
     const wantsText = /\b(text|type|heading color|font color)\b/i.test(text);
     const wantsAccent = /\b(accent|button|highlight)\b/i.test(text);
     const wantsBg = /\b(background|bg|make it|make the site|theme|page)\b/i.test(text) || (!wantsText && !wantsAccent);
@@ -365,7 +436,7 @@ export function applyLocalDesign(site: Site, message: string): { site: Site; rep
         next.theme.accent = color;
         next.theme.accentText = isDarkHex(color) ? "#f7f7f4" : "#111111";
       }
-      notes.push(`Set the page colors around ${named?.name || color}.`);
+      notes.push(`Set the page colors around ${named.name}.`);
     }
   }
 

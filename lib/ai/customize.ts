@@ -1,7 +1,8 @@
 import { answerLocally, currentClock, tryFactualAnswer } from "./answer";
+import { clonePublicSite } from "./clone-site";
 import { applyLocalDesign, wantsSiteChange } from "./local-designer";
 import { formatDomainSearch, searchPublicDomains } from "../domain-shop";
-import { looksLikeUrlMake } from "../url-guard";
+import { looksLikeCloneRequest, looksLikeUrlMake } from "../url-guard";
 import { siteSchema, type Site } from "../schema";
 import type { StudioSettings } from "../store";
 
@@ -47,6 +48,8 @@ Rules:
 - Theme colors must be hex like #14110e. Fonts must be real Google Fonts family names.
 - Write specific, human copy. No lorem ipsum. No stock startup slogans.
 - If they asked for a kind of business, rebuild the sitemap and copy for that business.
+- If they pasted a public https link to clone, copy, or recreate, rebuild from that page's title, headings, colors, and images. Keep ownerName. This is a recreation, not a pixel-perfect dump.
+- If they asked to build a site from scratch (colors, style, no link), rebuild a personal page for the owner and apply those styles.
 - If they asked for a small tweak, keep the rest but actually apply that tweak (colors, heading, sections, fonts, layout).
 - Never ignore a customization. Do what they asked.
 - Image URLs are optional. Prefer no broken images; omit image rather than inventing a fake local path.
@@ -129,7 +132,7 @@ const ASK_SYSTEM = `You are the owner's private assistant on a locked personal w
 Answer their questions in plain English. Be direct and useful. You may answer general questions, not only questions about this site. Use the current time given in the user message when they ask the time or date.
 
 You also know this site:
-- The website builder chat can rebuild the page when they ask (bakery, portfolio, colors, and so on).
+- The website builder chat can clone a public https page they paste, or build a site from scratch from colors and words (white and blue, bakery, portfolio).
 - URL maker: search a real public domain, then buy it at GoDaddy, Namecheap, or Porkbun. A made-up string is not a working internet address. After they pay the registrar, that URL works everywhere.
 - URL scanner: paste a link, YES means it looks safe, NO means do not open it.
 - Name scanner: YES means someone else uses the name publicly.
@@ -223,6 +226,13 @@ function parseModelJson(raw: string, fallback: Site) {
   return { site, reply, engine: "llm" as const };
 }
 
+function lastUserMessage(history: ChatTurn[]) {
+  for (let i = history.length - 1; i >= 0; i -= 1) {
+    if (history[i]?.role === "user") return history[i]?.content;
+  }
+  return undefined;
+}
+
 export async function customizeSite(input: {
   site: Site;
   message: string;
@@ -231,6 +241,11 @@ export async function customizeSite(input: {
 }): Promise<{ site: Site; reply: string; engine: "llm" | "local"; warning?: string; changed: boolean }> {
   const creds = credentials(input.settings);
   const history = input.history ?? [];
+
+  if (looksLikeCloneRequest(input.message)) {
+    const cloned = await clonePublicSite(input.site, input.message, lastUserMessage(history));
+    if (cloned) return { ...cloned, engine: "local" };
+  }
 
   if (looksLikeUrlMake(input.message)) {
     const result = await searchPublicDomains(input.message);

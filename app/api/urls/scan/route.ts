@@ -1,34 +1,10 @@
 import { NextResponse } from "next/server";
-import { lookup } from "node:dns/promises";
-import { isIP } from "node:net";
 import { isSameOrigin, readSessionCookie, verifySessionToken } from "@/lib/auth";
+import { hostIsPublic } from "@/lib/public-fetch";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { scanUrl, type UrlScan } from "@/lib/url-guard";
 
 export const runtime = "nodejs";
-
-function isBlockedAddress(address: string) {
-  if (address === "::1" || address === "0.0.0.0") return true;
-  if (address.includes(":")) {
-    const compact = address.toLowerCase();
-    return compact.startsWith("fc") || compact.startsWith("fd") || compact.startsWith("fe80");
-  }
-  const parts = address.split(".").map(Number);
-  if (parts.length !== 4 || parts.some((part) => Number.isNaN(part))) return true;
-  const [a, b] = parts;
-  if (a === 0 || a === 10 || a === 127) return true;
-  if (a === 169 && b === 254) return true;
-  if (a === 192 && b === 168) return true;
-  if (a === 172 && b >= 16 && b <= 31) return true;
-  return false;
-}
-
-async function hostIsPublic(hostname: string) {
-  if (isIP(hostname)) return !isBlockedAddress(hostname);
-  const results = await lookup(hostname, { all: true, verbatim: true });
-  if (results.length === 0) return false;
-  return results.every((item) => !isBlockedAddress(item.address));
-}
 
 async function probe(url: string): Promise<UrlScan> {
   const parsed = new URL(url);

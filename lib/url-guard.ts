@@ -49,9 +49,33 @@ export function extractUrl(text: string) {
 }
 
 export function looksLikeUrlQuestion(text: string) {
-  if (extractUrl(text)) return true;
+  if (looksLikeCloneRequest(text)) return false;
+  if (extractUrl(text) && /\b(scan|check|safe|real|legit|okay|ok|open this)\b/i.test(text)) return true;
   return /\b(scan|check|safe|real|legit|okay|ok)\b.+\b(url|link|website|site)\b/i.test(text) ||
     /\b(url|link)\b.+\b(scan|check|safe|yes|no)\b/i.test(text);
+}
+
+export function looksLikeCloneRequest(text: string) {
+  const t = text.trim();
+  if (!t) return false;
+  const scanning = /\b(scan|check|safe|legit|phishing|yes or no)\b/i.test(t);
+  const cloning = /\b(clone|recreate|replicate|mirror)\b/i.test(t);
+  if (scanning && !cloning) return false;
+
+  const url = extractUrl(t);
+  if (cloning) return true;
+  if (/\b(copy|imitate)\b.{0,48}\b(this |the )?(site|website|page|webpage|homepage)\b/i.test(t)) return true;
+  if (/\b(this |the )?(site|website|page|webpage|homepage)\b.{0,24}\b(copy|clone)\b/i.test(t)) return true;
+  if (url && /\b(look like|like this|based on|from this|duplicate)\b/i.test(t)) return true;
+  if (url && /\b(build|make|create|design)\b.{0,48}\b(like|from|clone|copy)\b/i.test(t)) return true;
+  if (!url) return false;
+  if (/\b(build|make|create|design)\b/i.test(t) && /\b(site|website|page|homepage)\b/i.test(t)) return true;
+  const rest = t
+    .replace(url, " ")
+    .replace(/https?:\/\//gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return !rest || /^(this|here|please|this one|clone|copy)$/i.test(rest);
 }
 
 export function slugify(value: string) {
@@ -89,6 +113,7 @@ export function nameToDotComHost(input: string) {
 export function looksLikeUrlMake(text: string) {
   const t = text.trim();
   if (!t) return false;
+  if (looksLikeCloneRequest(t)) return false;
   if (/\bscan(?:ner)?\b/i.test(t) && /\b(url|link)\b/i.test(t)) return false;
   const customizingThePage =
     /\b(web ?site|homepage|heading|palette|colou?r|section|bakery|portfolio|restaurant|coffee|hero|tagline|background|font)\b/i.test(

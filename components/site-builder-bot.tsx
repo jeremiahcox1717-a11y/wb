@@ -3,11 +3,11 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { looksLikeMoney, parseMoney } from "@/lib/currency";
 import type { Site } from "@/lib/schema";
-import { extractUrl, formatAnswer, looksLikeUrlMake, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
+import { extractUrl, formatAnswer, looksLikeCloneRequest, looksLikeUrlMake, looksLikeUrlQuestion, type UrlScan } from "@/lib/url-guard";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = ["What's the time?", "What can you do?", "Make the heading Jordan Bennett"];
+const SUGGESTIONS = ["What's the time?", "What can you do?", "Build a white and blue site"];
 
 export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [input, setInput] = useState("");
@@ -15,7 +15,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
   const [turns, setTurns] = useState<Turn[]>([
     {
       role: "assistant",
-      content: "Ask me anything — what’s the time, a question, or what to change on this site. I apply customizations on the live page.",
+      content: "Ask me to clone a public https link, or build a site from scratch — white and blue, a heading, a business type. Questions get answers without rebuilding.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
         return;
       }
 
-      if (looksLikeUrlQuestion(trimmed) && extractUrl(trimmed)) {
+      if (!looksLikeCloneRequest(trimmed) && looksLikeUrlQuestion(trimmed) && extractUrl(trimmed)) {
         const response = await fetch("/api/urls/scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
         </span>
         <div>
           <p className="text-[10px] font-semibold tracking-[0.24em] text-[#d4a574] uppercase">Website builder</p>
-          <p className="text-xs text-[#b9a89a]">{busy ? "Working…" : "Ask a question or tell me what to change"}</p>
+          <p className="text-xs text-[#b9a89a]">{busy ? "Working…" : "Clone a link, or tell me what to build"}</p>
         </div>
       </header>
 
@@ -154,8 +154,8 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
                 ? "builder-suggestion-time"
                 : item.includes("What can you")
                   ? "builder-suggestion-ask"
-                  : item.includes("heading")
-                    ? "builder-suggestion-heading"
+                  : item.toLowerCase().includes("white")
+                    ? "builder-suggestion-build"
                     : undefined
             }
             disabled={busy}
@@ -182,7 +182,7 @@ export function SiteBuilderBot({ onSite }: { onSite: (site: Site) => void }) {
             }
           }}
           rows={1}
-          placeholder="Ask a question, or tell me what to change…"
+          placeholder="Paste a https link to clone, or say build a white and blue site…"
           className="min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-[#5c564e]"
         />
         <button

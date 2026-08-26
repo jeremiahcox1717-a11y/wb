@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractUrl, generateUrl, looksLikeUrlMake, scanUrl } from "@/lib/url-guard";
+import { extractUrl, generateUrl, looksLikeCloneRequest, looksLikeUrlMake, looksLikeUrlQuestion, scanUrl } from "@/lib/url-guard";
 
 describe("url guard", () => {
   it("says yes for a normal https address", () => {
@@ -44,6 +44,19 @@ describe("url guard", () => {
     expect(looksLikeUrlMake("scan this url https://example.com")).toBe(false);
     expect(looksLikeUrlMake("build me a bakery")).toBe(false);
     expect(looksLikeUrlMake("make my website a bakery")).toBe(false);
+    expect(looksLikeUrlMake("clone https://example.com")).toBe(false);
+  });
+
+  it("treats a pasted link as a clone, not a scan, unless asked to check it", () => {
+    expect(looksLikeCloneRequest("https://example.com")).toBe(true);
+    expect(looksLikeCloneRequest("clone https://example.com")).toBe(true);
+    expect(looksLikeCloneRequest("copy this site")).toBe(true);
+    expect(looksLikeCloneRequest("clone this")).toBe(true);
+    expect(looksLikeCloneRequest("build a website and make it white and blue")).toBe(false);
+    expect(looksLikeCloneRequest("scan https://example.com")).toBe(false);
+    expect(looksLikeCloneRequest("is https://example.com safe")).toBe(false);
+    expect(looksLikeUrlQuestion("scan https://example.com")).toBe(true);
+    expect(looksLikeUrlQuestion("https://example.com")).toBe(false);
   });
 
   it("pulls a url out of a sentence", () => {
