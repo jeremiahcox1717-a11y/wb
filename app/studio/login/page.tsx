@@ -34,7 +34,7 @@ export default async function StudioLoginPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#111114] px-6 text-[#f4ece3]">
-      <form action={loginAction} method="post" className="w-full max-w-sm">
+      <form action={loginAction} className="w-full max-w-sm">
         <p className="text-xs font-semibold tracking-[0.28em] text-[#d4a574] uppercase">Private site</p>
         <h1 className="mt-4 font-serif text-4xl">Only you get in.</h1>
         <p className="mt-3 text-sm leading-6 text-[#b9a89a]">
