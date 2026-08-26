@@ -55,6 +55,7 @@ describe("local designer", () => {
     expect(site.identity.tagline.toLowerCase()).not.toMatch(/white and blue/);
     expect(site.theme.background.toLowerCase()).toBe("#f7f7f4");
     expect(site.theme.accent.toLowerCase()).toBe("#1d4e89");
+    expect(reply.toLowerCase()).toMatch(/fresh|scratch/);
     expect(reply.toLowerCase()).toMatch(/white|blue|live/);
   });
 

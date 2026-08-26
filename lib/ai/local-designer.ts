@@ -261,12 +261,17 @@ function wantsFreshBuild(text: string) {
     return false;
   }
   if (isBareBuild(text) || /\b(from scratch|start over)\b/i.test(text)) return true;
-  const build = text.match(
-    /\b(?:build|make|create|design|rebuild)\s+(?:me\s+)?(?:a |an |my |this |the )?(?:new )?(.+?)?(?:web ?site|website|site|page|homepage)\b/i,
+  if (
+    /\b(?:build|make|create|design|rebuild)\s+(?:me\s+)?(?:a |an |my |this |the )?(?:new )?(?:web\s*site|website|homepage)\b/i.test(
+      text,
+    )
+  ) {
+    return true;
+  }
+  const colored = text.match(
+    /\b(?:build|make|create|design|rebuild)\s+(?:me\s+)?(?:a |an |my |this |the )?(?:new )?(.+?)\s+(?:web\s*site|website|homepage|site|page)\b/i,
   );
-  if (!build) return false;
-  const middle = (build[1] || "").trim();
-  return !middle || isColorOnlyPhrase(middle) || /^(new|fresh|personal|private)$/i.test(middle);
+  return Boolean(colored?.[1] && isColorOnlyPhrase(colored[1]));
 }
 
 function extractBusiness(text: string) {
